@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: inventory_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234       # Mật khẩu DB
+      - MYSQL_DATABASE=inventory_db    # Tên Database sẽ tạo
+    ports:
+      - "3307:3306"                    # Map cổng 3307 máy bạn -> 3306 docker (để tránh đụng cổng nếu máy bạn có cài mysql cũ)
+    volumes:
+      - db_data:/var/lib/mysql         # Quan trọng: Giữ lại dữ liệu khi tắt Docker
+
+volumes:
+  db_data:
