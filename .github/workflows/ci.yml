@@ -17,19 +17,14 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v3
 
-      # Bước 2: Cài đặt môi trường Java (Giả định bạn dùng Java 17, nếu dùng 21 thì sửa lại)
-      - name: Setup Java JDK 21
+      # Bước 2: Cài đặt môi trường Java 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
-          distribution: 'temurin' # Bản JDK chuẩn doanh nghiệp hay dùng
-          cache: maven # Bật cache để những lần chạy sau build nhanh hơn
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
-      # Bước 3: Cấp quyền thực thi cho file Maven Wrapper (phòng trường hợp lỗi quyền trên Linux)
-      - name: Grant execute permission for mvnw
-        run: chmod +x mvnw
-
-      # Bước 4: Chạy test và đóng gói project
-      # Dùng 'verify' thay vì 'install' trên môi trường CI là Best Practice để tránh rác m2 repository
-      - name: Run Maven Build & Tests
-        run: ./mvnw clean verify
+      # Bước 3: Chạy toàn bộ Unit Test bằng Maven (Bỏ ./ đi)
+      - name: Run Maven Build and Tests
+        run: mvn clean verify
