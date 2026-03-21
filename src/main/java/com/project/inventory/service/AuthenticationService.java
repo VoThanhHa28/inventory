@@ -1,9 +1,9 @@
 package com.project.inventory.service;
 
-import com.project.inventory.dto.LoginRequestDTO;
-import com.project.inventory.dto.LoginResponseDTO;
-import com.project.inventory.dto.RegisterRequestDTO;
-import com.project.inventory.dto.RegisterResponseDTO;
+import com.project.inventory.dto.auth.LoginRequestDTO;
+import com.project.inventory.dto.auth.LoginResponseDTO;
+import com.project.inventory.dto.auth.RegisterRequestDTO;
+import com.project.inventory.dto.auth.RegisterResponseDTO;
 import com.project.inventory.entity.Role;
 import com.project.inventory.entity.User;
 import com.project.inventory.repository.UserRepository;

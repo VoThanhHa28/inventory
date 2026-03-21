@@ -1,0 +1,35 @@
+name: Spring Boot CI Pipeline
+
+# 1. Kích hoạt Bot khi có ai push code lên nhánh main/develop hoặc tạo Pull Request
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    name: Build & Run Unit Tests
+    runs-on: ubuntu-latest # Chạy trên server Linux xịn nhất của GitHub
+
+    steps:
+      # Bước 1: Kéo source code từ GitHub về con server ảo này
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      # Bước 2: Cài đặt môi trường Java (Giả định bạn dùng Java 17, nếu dùng 21 thì sửa lại)
+      - name: Setup Java JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin' # Bản JDK chuẩn doanh nghiệp hay dùng
+          cache: maven # Bật cache để những lần chạy sau build nhanh hơn
+
+      # Bước 3: Cấp quyền thực thi cho file Maven Wrapper (phòng trường hợp lỗi quyền trên Linux)
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
+
+      # Bước 4: Chạy test và đóng gói project
+      # Dùng 'verify' thay vì 'install' trên môi trường CI là Best Practice để tránh rác m2 repository
+      - name: Run Maven Build & Tests
+        run: ./mvnw clean verify

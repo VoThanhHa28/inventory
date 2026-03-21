@@ -1,4 +1,4 @@
-package com.project.inventory.dto;
+package com.project.inventory.dto.auth;
 
 import lombok.Data;
 

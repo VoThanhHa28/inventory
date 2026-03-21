@@ -1,4 +1,4 @@
-package com.project.inventory.dto;
+package com.project.inventory.dto.product;
 
 import lombok.Builder;
 import lombok.Data;

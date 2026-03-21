@@ -1,16 +1,13 @@
 package com.project.inventory.service;
 
-import com.project.inventory.dto.ProductRequestDTO;
-import com.project.inventory.dto.ProductResponseDTO;
+import com.project.inventory.dto.product.ProductRequestDTO;
+import com.project.inventory.dto.product.ProductResponseDTO;
 import com.project.inventory.entity.Product;
 import com.project.inventory.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.project.inventory.exception.ResourceNotFoundException;
 @Service
