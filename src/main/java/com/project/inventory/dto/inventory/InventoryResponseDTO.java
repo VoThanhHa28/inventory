@@ -1,4 +1,4 @@
-package com.project.inventory.dto;
+package com.project.inventory.dto.inventory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
