@@ -1,9 +1,10 @@
-package com.project.inventory.service;
+package com.project.inventory.service.impl;
 
 import com.project.inventory.dto.product.ProductRequestDTO;
 import com.project.inventory.dto.product.ProductResponseDTO;
 import com.project.inventory.entity.Product;
 import com.project.inventory.repository.ProductRepository;
+import com.project.inventory.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

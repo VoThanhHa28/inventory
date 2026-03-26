@@ -1,7 +1,7 @@
 package com.project.inventory.controller;
 
-import com.project.inventory.dto.InventoryRequestDTO;
-import com.project.inventory.dto.InventoryResponseDTO;
+import com.project.inventory.dto.inventory.InventoryRequestDTO;
+import com.project.inventory.dto.inventory.InventoryResponseDTO;
 import com.project.inventory.service.InventoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

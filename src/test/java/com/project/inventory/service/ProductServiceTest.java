@@ -5,6 +5,7 @@ import com.project.inventory.dto.product.ProductResponseDTO;
 import com.project.inventory.entity.Product;
 import com.project.inventory.exception.ResourceNotFoundException;
 import com.project.inventory.repository.ProductRepository;
+import com.project.inventory.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ public class ProductServiceTest {
     private ProductServiceImpl productService;
 
     // ===================================================================
-    // KỊCH BẢN 1: GET BY ID
+    // TEST SCENARIO 1: GET BY ID
     // ===================================================================
 
     @Test
@@ -36,7 +37,7 @@ public class ProductServiceTest {
         // Given
         Long productId = 1L;
         Product mockProduct = Product.builder()
-                .name("Bàn phím cơ")
+                .name("Mechanical Keyboard")
                 .price(2000000.0)
                 .stockQuantity(10)
                 .build();
@@ -50,7 +51,7 @@ public class ProductServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(productId, result.getId());
-        assertEquals("Bàn phím cơ", result.getName());
+        assertEquals("Mechanical Keyboard", result.getName());
         verify(productRepository, times(1)).findById(productId);
     }
 
@@ -66,12 +67,12 @@ public class ProductServiceTest {
                 ResourceNotFoundException.class,
                 () -> productService.getProductById(fakeId)
         );
-        assertTrue(exception.getMessage().contains("Không tìm thấy"));
+        assertTrue(exception.getMessage().contains("Not found"));
         verify(productRepository, times(1)).findById(fakeId);
     }
 
     // ===================================================================
-    // KỊCH BẢN 2: CREATE
+    // TEST SCENARIO 2: CREATE
     // ===================================================================
 
     @Test
@@ -79,7 +80,7 @@ public class ProductServiceTest {
     void createProduct_ShouldReturnProductResponseDTO() {
         // Given
         ProductRequestDTO requestDTO = new ProductRequestDTO();
-        requestDTO.setName("Chuột Gaming RGB");
+        requestDTO.setName("RGB Gaming Mouse");
         requestDTO.setPrice(500000.0);
         requestDTO.setStockQuantity(20);
 
@@ -103,7 +104,7 @@ public class ProductServiceTest {
     }
 
     // ===================================================================
-    // KỊCH BẢN 3: UPDATE
+    // TEST SCENARIO 3: UPDATE
     // ===================================================================
 
     @Test
@@ -112,12 +113,12 @@ public class ProductServiceTest {
         // Given
         Long productId = 1L;
         ProductRequestDTO updateRequest = new ProductRequestDTO();
-        updateRequest.setName("Bàn phím cơ v2");
+        updateRequest.setName("Mechanical Keyboard v2");
         updateRequest.setPrice(2500000.0);
         updateRequest.setStockQuantity(15);
 
         Product existingProduct = Product.builder()
-                .name("Bàn phím cơ v1")
+                .name("Mechanical Keyboard v1")
                 .price(2000000.0)
                 .stockQuantity(10)
                 .build();

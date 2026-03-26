@@ -1,7 +1,7 @@
 package com.project.inventory.service.impl;
 
-import com.project.inventory.dto.InventoryRequestDTO;
-import com.project.inventory.dto.InventoryResponseDTO;
+import com.project.inventory.dto.inventory.InventoryRequestDTO;
+import com.project.inventory.dto.inventory.InventoryResponseDTO;
 import com.project.inventory.entity.Inventory;
 import com.project.inventory.entity.InventoryStatus;
 import com.project.inventory.exception.InsufficientStockException;

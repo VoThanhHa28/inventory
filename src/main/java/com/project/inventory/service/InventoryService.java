@@ -1,7 +1,7 @@
 package com.project.inventory.service;
 
-import com.project.inventory.dto.InventoryRequestDTO;
-import com.project.inventory.dto.InventoryResponseDTO;
+import com.project.inventory.dto.inventory.InventoryRequestDTO;
+import com.project.inventory.dto.inventory.InventoryResponseDTO;
 import java.util.List;
 
 /**

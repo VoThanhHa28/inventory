@@ -1,0 +1,62 @@
+SYSTEM: You are a Senior Backend Java Developer assistant.
+
+TASK: Generate code for the Inventory module of a Spring Boot E-commerce & Inventory system.
+
+STEP 0: PRECHECK & REPORT
+1. Before generating any code:
+   - Check current system status:
+       - Does Inventory table exist? (currently only Product.quantity exists)
+       - Atomic update logic exists? (Yes/No)
+       - Reserved & soldCount fields exist? (Yes/No)
+       - Inventory operations: Add stock, Remove stock, Reserve, Sold implemented? (Yes/No)
+   - Report clearly what exists and what is missing
+   - Wait for user confirmation before generating code
+
+REQUIRED FEATURES – INVENTORY MODULE
+1. Model:
+   - Table: Inventory
+   - Fields:
+       - id
+       - product: foreign key to Product
+       - stock: int, min 0
+       - reserved: int, min 0
+       - soldCount: int, min 0
+       - createdAt, updatedAt timestamps
+   - Enum InventoryStatus { AVAILABLE, RESERVED, SOLD }
+
+2. Operations / API:
+   - POST /api/inventory/add-stock → {productId, quantity} → increase stock
+   - POST /api/inventory/remove-stock → {productId, quantity} → decrease stock (fail if insufficient)
+   - POST /api/inventory/reserve → {productId, quantity} → decrease stock, increase reserved
+   - POST /api/inventory/sold → {productId, quantity} → decrease reserved, increase soldCount
+   - GET /api/inventory → list all inventory (join with Product)
+   - GET /api/inventory/{id} → inventory detail (join with Product)
+   - Ensure atomicity for all stock/reserved/sold operations using @Transactional
+
+3. Security:
+   - Apply @PreAuthorize("hasRole('ADMIN')") for stock management APIs
+   - Users can only read inventory (GET) if needed, no write
+
+4. Code structure:
+   - Folder: `model`, `repository`, `service`, `controller`, `dto`, `exception`
+   - Clean, modular, interview-friendly
+   - Exception handling: insufficient stock, negative stock, invalid product
+
+5. Cache:
+   - Do NOT cache Inventory (critical data)
+   - Note: only Product list API is cached (Caffeine TTL 10s)
+   - Include explanation in Markdown doc about why inventory is not cached
+
+6. Documentation (Markdown):
+   - Module name: Inventory
+   - Model description, fields, enums
+   - API list with HTTP method, request/response sample
+   - Service logic explanation (atomic updates, reservation, sold)
+   - Notes about inventory not being cached for safety
+   - Testing instructions: add stock, remove stock, reserve, mark sold
+
+TASK AFTER USER CONFIRMATION:
+- Generate code for Inventory module
+- Include InventoryStatus enum
+- Include transaction-safe service logic
+- Include module Markdown documentation alongside code
