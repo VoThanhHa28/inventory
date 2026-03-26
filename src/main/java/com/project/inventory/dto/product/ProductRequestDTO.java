@@ -5,18 +5,23 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * ProductRequestDTO - Request payload for product creation/update
+ */
 @Data
 public class ProductRequestDTO {
 
-    @NotBlank(message = "Tên sản phẩm không được để trống!") // Không được null, không được ""
+    @NotBlank(message = "Product name is required")
     private String name;
 
-    @NotNull(message =  "Giá sản phẩm không được để trống!")
-    @Min(value = 0, message = "Giá sản phẩm phải lớn hơn hoặc bằng 0")
+    private String description;
+
+    @NotNull(message = "Product price is required")
+    @Min(value = 0, message = "Product price must be >= 0")
     private Double price;
 
-    @NotNull(message = "Số lượng không được để trống")
-    @Min(value = 0, message = "Số lượng kho phải lớn hơn hoặc bằng 0")
+    @NotNull(message = "Stock quantity is required")
+    @Min(value = 0, message = "Stock quantity must be >= 0")
     private Integer stockQuantity;
 
     private String image;
