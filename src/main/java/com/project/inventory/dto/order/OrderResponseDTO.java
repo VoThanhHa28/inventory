@@ -10,13 +10,13 @@ import java.util.List;
 @Builder
 public class OrderResponseDTO {
     private Long orderId;
-    private String customerName;
+    private Long userId;
     private Double totalAmount;
-    private LocalDateTime orderDate;
+    private LocalDateTime createdAt;
     private String status;
     private String message;
 
-    // Bổ sung danh sách chi tiết hóa đơn
+    // Danh sách chi tiết sản phẩm trong đơn hàng
     private List<OrderItemResponseDTO> items;
 
     @Data
