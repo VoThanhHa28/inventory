@@ -19,12 +19,9 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    // --- THÊM 2 ÔNG NÀY VÀO ---
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    // (Hàm register cũ giữ nguyên)
     public RegisterResponseDTO register(RegisterRequestDTO request) {
         var user = User.builder()
                 .username(request.getUsername())
@@ -40,9 +37,8 @@ public class AuthenticationService {
                 .build();
     }
 
-    // --- THÊM HÀM LOGIN MỚI ---
     public LoginResponseDTO login(LoginRequestDTO request) {
-        // 1. Nhờ Vệ sĩ kiểm tra User/Pass. Nếu sai, nó sẽ ném lỗi 403/BadCredentials ngay tại dòng này.
+        // Authenticate credentials using AuthenticationManager
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -50,14 +46,14 @@ public class AuthenticationService {
                 )
         );
 
-        // 2. Nếu đi qua được dòng trên -> Pass đúng! Ta tìm User đó trong DB ra.
+        // Load user from database after successful authentication
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow();
 
-        // 3. Đưa User vào máy in thẻ để ép ra chuỗi Token
+        // Generate JWT token for authenticated user
         var jwtToken = jwtService.generateToken(user);
 
-        // 4. Đóng gói Token vào DTO trả về cho Frontend
+        // Return token in response DTO
         return LoginResponseDTO.builder()
                 .token(jwtToken)
                 .build();
