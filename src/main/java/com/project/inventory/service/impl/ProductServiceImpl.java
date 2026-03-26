@@ -179,7 +179,7 @@ public class ProductServiceImpl implements ProductService {
                 .price(product.getPrice())
                 .stockQuantity(product.getStockQuantity())
                 .image(product.getImage())
-                .isDeleted(product.getDeleted())
+                .isDeleted(product.getIsDeleted())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
