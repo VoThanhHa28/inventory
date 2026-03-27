@@ -1,5 +1,7 @@
 package com.project.inventory.controller;
 
+import com.project.inventory.entity.User;
+
 import com.project.inventory.dto.response.ApiResponse;
 import com.project.inventory.dto.order.OrderRequestDTO;
 import com.project.inventory.dto.order.OrderResponseDTO;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -100,20 +101,15 @@ public class OrderController {
     }
 
     /**
-     * Helper: Extract current user ID from JWT token
+     * Helper: Extract current user ID from SecurityContext.
+     * Principal is set by JwtAuthenticationFilter as the User entity (implements UserDetails).
      */
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
         }
-        // Simplified: In production, extract from UserDetails or Claims
-        // For now, assume principal is Long userId
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            // You may need to get userId from your custom UserDetails implementation
-            throw new RuntimeException("Extract userId from JWT token");
-        }
-        return (Long) principal;
+        User user = (User) authentication.getPrincipal();
+        return user.getId();
     }
 }
