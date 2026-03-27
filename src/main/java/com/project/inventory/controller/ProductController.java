@@ -4,31 +4,54 @@ import com.project.inventory.dto.product.ProductRequestDTO;
 import com.project.inventory.dto.product.ProductResponseDTO;
 import com.project.inventory.dto.response.ApiResponse;
 import com.project.inventory.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-@RestController // 1. Báo đây là nơi tiếp nhận API
-@RequestMapping("api/products") // 2. Đường dẫn chung: http://localhost:8080/api/products
+/**
+ * ProductController - REST API for product management
+ * 
+ * Endpoints:
+ * - GET /api/products (list, cached)
+ * - GET /api/products/{id} (detail, not cached, always live)
+ * - POST /api/products (admin only, cache eviction)
+ * - PUT /api/products/{id} (admin only, cache eviction)
+ * - DELETE /api/products/{id} (admin only, soft delete, cache eviction)
+ */
+@RestController
+@RequestMapping("api/products")
 @RequiredArgsConstructor
+@Slf4j
+@Tag(name = "Products", description = "Product management APIs")
 public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    // @Valid: Ra lệnh cho Spring "Hãy kiểm tra DTO này theo luật tôi vừa viết"
-    // Nếu sai luật -> Ném lỗi ngay lập tức, không cho chạy vào trong hàm.
-    public ResponseEntity<ApiResponse<ProductResponseDTO>> createProduct(@Valid @RequestBody ProductRequestDTO request){
+    @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "products", allEntries = true)
+    @Transactional
+    @Operation(summary = "Create product", description = "Create new product (Admin only)")
+    public ResponseEntity<ApiResponse<ProductResponseDTO>> createProduct(@Valid @RequestBody ProductRequestDTO request) {
+        log.info("Creating new product: {}", request.getName());
+        
         ProductResponseDTO newProduct = productService.createProduct(request);
 
         ApiResponse<ProductResponseDTO> response = ApiResponse.<ProductResponseDTO>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Thêm mới sản phẩm thành công")
+                .message("Product created successfully")
                 .data(newProduct)
                 .build();
 
@@ -36,61 +59,89 @@ public class ProductController {
     }
 
     @GetMapping
+    @Cacheable(value = "products", cacheManager = "cacheManager")
+    @Transactional(readOnly = true)
+    @Operation(summary = "List all products", description = "Get paginated list of products (cached, 10s TTL)")
     public ResponseEntity<ApiResponse<Page<ProductResponseDTO>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
-        // 1. Giữ nguyên logic xử lý Pageable & Sort cực chuẩn của bạn
+        log.debug("Fetching all products with pagination - page: {}, size: {}", page, size);
+        
+        // Create sort and pageable objects
         Sort.Direction direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // 2. Lấy dữ liệu từ Service (giữ nguyên)
+        // Fetch data from service
         Page<ProductResponseDTO> products = productService.getAllProducts(pageable);
 
-        // 3. CHỈ THÊM BƯỚC NÀY: Đóng gói vào hộp ApiResponse
+        // Wrap in API response
         ApiResponse<Page<ProductResponseDTO>> response = ApiResponse.<Page<ProductResponseDTO>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Lấy danh sách sản phẩm thành công")
+                .message("Products retrieved successfully")
                 .data(products)
                 .build();
 
         return ResponseEntity.ok(response);
     }
 
-
-    // GET /api/products/1
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductResponseDTO>> getProductById(@PathVariable Long id){
-        ProductResponseDTO getProductById = productService.getProductById(id);
+    @Transactional(readOnly = true)
+    @Operation(summary = "Get product by ID", description = "Get detailed product information (not cached, always live)")
+    public ResponseEntity<ApiResponse<ProductResponseDTO>> getProductById(@PathVariable Long id) {
+        log.debug("Fetching product by ID: {}", id);
+        
+        ProductResponseDTO product = productService.getProductById(id);
 
         ApiResponse<ProductResponseDTO> response = ApiResponse.<ProductResponseDTO>builder()
-                .code(200)
-                .message("Lấy thông tin sản phẩm thành công")
-                .data(getProductById)
+                .code(HttpStatus.OK.value())
+                .message("Product retrieved successfully")
+                .data(product)
                 .build();
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductResponseDTO>> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO request){
-        ProductResponseDTO updateProduct = productService.updateProduct(id, request);
+    @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "products", allEntries = true)
+    @Transactional
+    @Operation(summary = "Update product", description = "Update product information (Admin only)")
+    public ResponseEntity<ApiResponse<ProductResponseDTO>> updateProduct(
+            @PathVariable Long id, 
+            @Valid @RequestBody ProductRequestDTO request
+    ) {
+        log.info("Updating product with ID: {}", id);
+        
+        ProductResponseDTO updatedProduct = productService.updateProduct(id, request);
 
         ApiResponse<ProductResponseDTO> response = ApiResponse.<ProductResponseDTO>builder()
-                .code(200)
-                .message("Cập nhật thông tin sản phẩm thành công")
-                .data(updateProduct)
+                .code(HttpStatus.OK.value())
+                .message("Product updated successfully")
+                .data(updatedProduct)
                 .build();
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+    @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "products", allEntries = true)
+    @Transactional
+    @Operation(summary = "Delete product", description = "Soft delete product (Admin only)")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        log.info("Soft deleting product with ID: {}", id);
+        
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .code(HttpStatus.NO_CONTENT.value())
+                .message("Product deleted successfully")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 }

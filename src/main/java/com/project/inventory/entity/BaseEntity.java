@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,11 +23,11 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Tự tăng
     private Long id;
 
-    @Column(name = "create_at", updatable = false) //Không cho phép sửa
-    @CreationTimestamp //Tự động lấy giờ hiện tại khi insert
+    @Column(name = "create_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "update_at")
-    @CreationTimestamp //Tự động lấy giờ hiện tại khi update
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 }

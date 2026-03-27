@@ -18,72 +18,68 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Lấy secret-key từ application.properties
+    // JWT secret key from application.properties
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
-    // Lấy thời hạn token từ application.properties
+    // JWT token expiration time from application.properties
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
-    // --------------------------------------------------------
-    // 1. MÁY IN THẺ (Tạo Token cho User)
-    // --------------------------------------------------------
+    // Generate JWT token with no extra claims
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    // Generate JWT token with extra claims
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
-                .setClaims(extraClaims) // Thông tin phụ (nếu có)
-                .setSubject(userDetails.getUsername()) // Tên chủ thẻ
-                .setIssuedAt(new Date(System.currentTimeMillis())) // Ngày cấp
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // Ngày hết hạn
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Đóng dấu đỏ bảo mật
-                .compact(); // Ép nhựa thành chuỗi String
+                .setClaims(extraClaims) // Add extra claims if provided
+                .setSubject(userDetails.getUsername()) // Subject: username
+                .setIssuedAt(new Date(System.currentTimeMillis())) // Issued at
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // Expiration time
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Sign with HS256
+                .compact(); // Compact to string
     }
 
-    // --------------------------------------------------------
-    // 2. MÁY QUÉT THẺ (Kiểm tra thẻ thật/giả và tính hợp lệ)
-    // --------------------------------------------------------
+    // Validate JWT token
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        // Thẻ hợp lệ khi: Tên trên thẻ khớp với tên User truyền vào VÀ thẻ chưa hết hạn
+        // Token is valid if username matches AND token is not expired
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    // Lấy tên User (username) được in trên thẻ
+    // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Kiểm tra thẻ đã hết hạn chưa?
+    // Check if token is expired
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Đọc ngày hết hạn in trên thẻ
+    // Extract expiration date from token
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // --------------------------------------------------------
-    // CÁC HÀM HỖ TRỢ BÊN TRONG (Bóc tách dữ liệu thẻ)
-    // --------------------------------------------------------
+    // Generic method to extract any claim from token
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
+    // Extract all claims from token
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey()) // Đưa "Chữ ký bí mật" vào để đối chiếu
+                .setSigningKey(getSignInKey()) // Set signing key for verification
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // Tạo chìa khóa (Key) chuẩn hóa từ chuỗi secretKey
+    // Create signing key from BASE64-encoded secret
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

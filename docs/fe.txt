@@ -1,0 +1,40 @@
+SYSTEM: You are a Senior Backend Java Developer assistant.
+
+TASK: Generate frontend UI for a Spring Boot E-commerce & Inventory system using React (or Vue).
+
+STEP 0 - PRECHECK & REPORT:
+1. Before generating code:
+   - Check if any UI exists (React/Vue/HTML)
+   - Check which APIs are ready (Product list/detail, Cart, Orders)
+   - Report missing UI components
+   - Wait for user confirmation before generating code
+
+REQUIRED FEATURES – FRONTEND
+1. Pages:
+   - Product List: grid, search, filters, pagination
+   - Product Detail: show images, description, add to cart
+   - Cart & Checkout: list selected items, enter address, submit order
+   - Order History: list user orders, status
+
+2. API Integration:
+   - Call backend API for each page
+   - Handle JWT auth for user
+   - Show live data from Product Detail (do not cache)
+   - Show eventual consistency for Product List (cached 10s)
+
+3. Code Structure:
+   - Modular React components
+   - Services / API folder for HTTP calls
+   - Use context or state management for cart
+   - Clean, interview-friendly, readable
+
+4. Documentation (Markdown):
+   - Explain pages, components, and API integration
+   - Notes about JWT auth handling
+   - Instructions to run frontend
+   - Notes about caching / eventual consistency for Product List
+
+TASK AFTER USER CONFIRMATION:
+- Generate UI code for above pages
+- Integrate with existing backend APIs
+- Include Markdown documentation

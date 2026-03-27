@@ -1,4 +1,4 @@
-package com.project.inventory.config;
+package com.project.inventory.configuration;
 
 import com.project.inventory.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService; // Lấy hàm tìm user trong DB
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -31,33 +31,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 1. Lấy cái vé từ Header của HTTP Request
+        // Extract JWT token from Authorization header
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
 
-        // 2. Kiểm tra: Nếu không có vé, hoặc vé không bắt đầu bằng chữ "Bearer " -> Đuổi đi luôn (Cho qua trạm nhưng không được cấp quyền)
+        // Check if Authorization header exists and starts with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 3. Cắt bỏ chữ "Bearer " (7 ký tự) để lấy cái chuỗi mã hóa loằng ngoằng
+        // Extract JWT token (remove "Bearer " prefix)
         jwt = authHeader.substring(7);
 
-        // 4. Bỏ vé vào máy quét để lấy tên User
+        // Extract username from JWT token
         username = jwtService.extractUsername(jwt);
 
-        // 5. Nếu quét được tên, VÀ người này chưa được xác thực trong phiên làm việc hiện tại
+        // Validate token and set authentication if user is not yet authenticated
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // Tìm user trong DB xem có thật không
+            // Load user details from database
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // 6. Nhờ máy quét kiểm tra vé có hết hạn/đúng chủ không?
+            // Validate JWT token signature and expiration
             if (jwtService.isTokenValid(jwt, userDetails)) {
 
-                // 7. Vé CHUẨN -> Cấp thẻ xanh (Authentication) cho phép đi vào hệ thống
+                // Create and set authentication token
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -65,12 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Lưu trạng thái "Đã đăng nhập" vào Context của Spring
+                // Store authentication in SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // 8. Chuyển cho trạm kiểm soát tiếp theo
+        // Continue filter chain
         filterChain.doFilter(request, response);
     }
 }

@@ -1,0 +1,287 @@
+================================================================================
+SYSTEM STATUS REPORT - PRECHECK ANALYSIS
+Spring Boot E-commerce & Inventory Management System
+================================================================================
+
+NGÀY: 26/03/2026
+LOẠI: Precheck & Gap Analysis
+TRẠNG THÁI: Chờ user confirm trước khi implement
+
+================================================================================
+PHẦN 1: NHỮNG GÌ ĐÃ CÓ
+================================================================================
+
+✅ PRODUCT MODULE
+- CRUD API đầy đủ: GET /api/products, POST /api/products, PUT /api/products/{id}, DELETE
+- ProductRepository có custom query deductStock (atomic update)
+- ProductController xây dựng tốt
+- Cấu trúc DTO rõ ràng: ProductRequestDTO, ProductResponseDTO
+
+✅ ORDER MODULE
+- POST /api/orders API exists
+- OrderController xây dựng
+- OrderDetail entity để tracking chi tiết order
+- OrderRepository đã tạo
+
+✅ USER & AUTHENTICATION MODULE
+- User entity implements UserDetails
+- Role enum có 2 giá trị: ADMIN, USER
+- JWT Service (JwtService.java) tạo & validate token
+- JWT Authentication Filter (JwtAuthenticationFilter.java)
+- AuthController xử lý register & login
+- CustomUserDetailsService load user từ database
+- Secret key & expiration config trong application.properties
+
+✅ INFRASTRUCTURE & CONFIG
+- SecurityConfig.java configure Spring Security
+- OpenApiConfig.java setup Swagger/SpringDoc
+- WebConfig.java setup CORS
+- GlobalExceptionHandler xử lý exceptions & validation errors
+- Docker-compose.yml setup MySQL 8.0 container (inventory_db)
+- application.properties config đầy đủ database, JWT, file upload
+
+✅ AUDIT LOG CƠ BẢN
+- BaseEntity có createdAt @CreationTimestamp
+- BaseEntity có updatedAt @UpdateTimestamp
+- Tự động track thời gian tạo & cập nhật
+
+✅ API DOCUMENTATION
+- Swagger UI via SpringDoc OpenAPI
+- OpenApiConfig configured
+
+✅ FILE UPLOAD
+- FileUploadController xử lý upload
+- Uploads lưu trong folder uploads/
+- Max file size 10MB config
+
+✅ VALIDATION
+- @Valid annotation in controllers
+- GlobalExceptionHandler catch ConstraintViolationException
+- Input validation hoàn thành
+
+================================================================================
+PHẦN 2: NHỮNG GÌ THIẾU / CHƯA HOÀN THÀNH
+================================================================================
+
+❌ INVENTORY MODULE (CRITICAL)
+- Không có separate Inventory entity
+- Không có InventoryStatus enum (AVAILABLE, RESERVED, SOLD)
+- Chỉ có Product.stockQuantity
+- MISSING: reserved field (tồn kho dự bị)
+- MISSING: soldCount field (số đã bán)
+- MISSING: Reservation logic (khi đặt hàng: reduce stock, increase reserved)
+- MISSING: Sold logic (khi hoàn thành: reduce reserved, increase soldCount)
+- Atomic update chỉ có native query trong ProductRepository, chưa có transaction wrapper
+
+❌ ORDER-USER LINKING (CRITICAL)
+- Order không có @ManyToOne User
+- Order không có userId field
+- Không track user nào đặt order
+- NEED: Link order to authenticated user
+
+❌ SOFT DELETE & FULL AUDIT LOG
+- Product không có is_deleted flag
+- Không có @SQLDelete annotation
+- Chỉ có createdAt/updatedAt mà không có version history
+- MISSING: Product audit log (track name, description, price changes)
+
+❌ ORDER STATUS ENUM
+- Không có OrderStatus enum
+- MISSING: PENDING, COMPLETED, CANCELLED states
+- Order không track trạng thái
+
+❌ @PREAUTHORIZE RBAC
+- Role enum có nhưng chưa apply @PreAuthorize trên endpoints
+- MISSING: @PreAuthorize("hasRole('ADMIN')") trên admin APIs
+- MISSING: Identify admin-only APIs
+- SecurityConfig bắt buộc token cho tất cả nhưng không phân quyền endpoint
+
+❌ CACHE (CAFFEINE)
+- Không có Caffeine dependency
+- Không có @EnableCaching
+- Không có @Cacheable annotation
+- MISSING: Cache TTL 10s cho product list API
+- MISSING: Don't cache product detail hoặc inventory
+
+❌ DOCKER & CONTAINER ORCHESTRATION
+- Có docker-compose.yml nhưng chỉ MySQL
+- MISSING: Dockerfile để build Spring Boot app image
+- MISSING: Service definition cho app trong docker-compose
+- MISSING: Nginx config cho load balancing 2 instances
+- MISSING: Environment variables setup
+
+❌ MODULE DOCUMENTATION
+- MISSING: Product module markdown (API list, service logic, test instructions)
+- MISSING: Order module markdown
+- MISSING: Inventory module markdown (khi implement)
+- MISSING: User & RBAC module markdown
+- MISSING: Cache notes documentation
+
+================================================================================
+PHẦN 3: BẤT NHẤT QUÁN / CẦN CLARIFY
+================================================================================
+
+1. ORDER ENTITY
+   - Hiện tại Order không liên kết User
+   - Cần: Order @ManyToOne User để track ai đặt hàng
+   - Hoặc chỉ lưu userId?
+
+2. INVENTORY ENTITY
+   - Tạo separate Inventory table hay thêm field vào Product?
+   - Nếu separate: Inventory @OneToOne Product hay @ManyToOne?
+   - Management reserved & soldCount ở đâu?
+
+3. AUDIT LOG STRATEGY
+   - Chỉ cần createdAt/updatedAt hay version history đầy đủ?
+   - Nếu version history: Cần table riêng hay JSON field?
+
+4. @PREAUTHORIZE SCOPE
+   - Toàn bộ admin endpoints hay chỉ một số?
+   - Ví dụ nào là admin-only?
+   - DELETE /api/products/{id} là admin-only hay public?
+
+5. DOCKER STRATEGY
+   - Build jar từ Maven hay dùng multi-stage Dockerfile?
+   - Chạy bao nhiêu instances Spring Boot?
+   - Nginx load balancing cấu hình sao?
+
+6. CACHE STRATEGY
+   - Chỉ cache GET /api/products hay endpoints nào khác?
+   - TTL = 10s phù hợp?
+   - Invalidate cache khi POST/PUT/DELETE products?
+
+================================================================================
+PHẦN 4: CÔNG NGHỆ STACK HIỆN TẠI
+================================================================================
+
+Framework & Dependencies:
+- Spring Boot 3.5.8
+- Java 21
+- MySQL 8.0 (Docker)
+- Spring Security + JWT (JJWT 0.11.5)
+- JPA / Hibernate
+- Maven
+- SpringDoc OpenAPI 2.8.4 (Swagger UI)
+- Lombok
+- Spring Validation
+
+Build & Deployment:
+- Maven (pom.xml)
+- Docker Compose (MySQL only, NOT yet app)
+
+Database:
+- MySQL 8.0 port 3307->3306
+- Database: inventory_db
+- Root: root, Password: 1234
+- Persistent volume: db_data
+
+================================================================================
+PHẦN 5: PRIORITIZE WORK (TỪNG BƯỚC)
+================================================================================
+
+PRIORITY 1 - CRITICAL (Implement immediately):
+1. Inventory Module - Separate table with AVAILABLE/RESERVED/SOLD status
+2. Order-User Linking - Add @ManyToOne User to Order
+3. @PreAuthorize RBAC - Apply permission checks on admin APIs
+4. OrderStatus Enum - Add PENDING/COMPLETED/CANCELLED
+
+PRIORITY 2 - HIGH (Implement after Priority 1):
+5. Soft Delete - Add is_deleted to Product
+6. Product Audit Log - Track version history
+7. Transactional Safety - Wrap critical operations in @Transactional
+
+PRIORITY 3 - MEDIUM (Implement after Priority 2):
+8. Caffeine Cache - Cache product list with TTL 10s
+9. Dockerfile - Build Spring Boot app image
+10. Docker-compose Update - Add app service + Nginx
+
+PRIORITY 4 - LOW (Documentation & Polish):
+11. Module Documentation - Markdown files cho mỗi module
+12. Integration Tests - Test critical flows
+13. Performance Tuning - Index databases, query optimization
+
+================================================================================
+PHẦN 6: CÔNG CỤ & THÔNG TIN KHÁC
+================================================================================
+
+SWAGGER UI: http://localhost:8080/swagger-ui.html
+
+CURRENT API ENDPOINTS:
+- POST /api/auth/register - Register user
+- POST /api/auth/login - Login & get JWT token
+- GET /api/products - List products
+- GET /api/products/{id} - Get product detail
+- POST /api/products - Create product
+- PUT /api/products/{id} - Update product
+- DELETE /api/products/{id} - Delete product
+- POST /api/orders - Create order
+- POST /api/uploads - Upload file
+
+DATABASE SCHEMA (Current):
+- users table (id, username, password, email, role, ...)
+- products table (id, name, description, price, stockQuantity, created_at, updated_at)
+- orders table (id, order_number, total_amount, created_at, updated_at)
+- order_details table (id, order_id, product_id, quantity, price)
+- roles table (id, name)
+
+FILE STRUCTURE:
+src/main/java/com/project/inventory/
+├── InventoryApplication.java (Main)
+├── configuration/ (4 files)
+│   ├── JwtAuthenticationFilter.java
+│   ├── OpenApiConfig.java
+│   ├── SecurityConfig.java
+│   └── WebConfig.java
+├── controller/ (4 files)
+│   ├── AuthController.java
+│   ├── FileUploadController.java
+│   ├── OrderController.java
+│   └── ProductController.java
+├── dto/ (folders)
+│   ├── auth/ (DTOs cho auth)
+│   ├── order/ (DTOs cho order)
+│   ├── product/ (DTOs cho product)
+│   └── response/ (ApiResponse wrapper)
+├── entity/ (6 files)
+│   ├── BaseEntity.java
+│   ├── Order.java
+│   ├── OrderDetail.java
+│   ├── Product.java
+│   ├── Role.java
+│   └── User.java
+├── exception/ (2+ files)
+│   ├── GlobalExceptionHandler.java
+│   └── ResourceNotFoundException.java
+├── repository/ (3+ files)
+│   ├── OrderRepository.java
+│   ├── ProductRepository.java
+│   └── UserRepository.java
+└── service/ (7+ files)
+    ├── AuthenticationService.java
+    ├── CustomUserDetailsService.java
+    ├── JwtService.java
+    ├── OrderService.java
+    ├── ProductService.java
+    └── impl/
+        ├── OrderServiceImpl.java
+        └── ProductServiceImpl.java
+
+================================================================================
+PHẦN 7: NEXT STEPS - CHỜ USER CONFIRM
+================================================================================
+
+Cần user xác nhận:
+
+1. Inventory Module Design - Entity structure?
+2. Order-User Linking - How exactly?
+3. Audit Log Strategy - Simple timestamps or full version history?
+4. @PreAuthorize Scope - Which APIs are admin-only?
+5. Docker Architecture - How many app instances? Load balancing setup?
+6. Cache Strategy - Which endpoints? TTL 10s ok?
+7. Timeline - Implement all at once hay từng module?
+
+User reply -> I will generate detailed implementation plan & code
+
+================================================================================
+END OF REPORT
+================================================================================

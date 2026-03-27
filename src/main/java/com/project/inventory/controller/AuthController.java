@@ -22,33 +22,33 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterResponseDTO>> register(@RequestBody RegisterRequestDTO request) {
-        // 1. Lấy dữ liệu từ Service
+        // Call service to register user
         RegisterResponseDTO data = authenticationService.register(request);
 
-        // 2. Đóng gói vào hộp ApiResponse
+        // Wrap response in ApiResponse
         ApiResponse<RegisterResponseDTO> response = ApiResponse.<RegisterResponseDTO>builder()
                 .code(201)
-                .message("Đăng ký tài khoản thành công!")
+                .message("User registered successfully!")
                 .data(data)
                 .build();
 
-        // 3. Trả về
+        // Return response
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody LoginRequestDTO request) {
-        // 1. Lấy dữ liệu từ Service
+        // Call service to authenticate user
         LoginResponseDTO data = authenticationService.login(request);
 
-        // 2. Đóng gói vào hộp ApiResponse
+        // Wrap response in ApiResponse
         ApiResponse<LoginResponseDTO> response = ApiResponse.<LoginResponseDTO>builder()
                 .code(200)
-                .message("Đăng nhập thành công!")
+                .message("User logged in successfully!")
                 .data(data)
                 .build();
 
-        // 3. Trả về
+        // Return response
         return ResponseEntity.ok(response);
     }
 }
