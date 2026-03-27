@@ -1,5 +1,6 @@
 package com.project.inventory.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,6 +19,8 @@ public class ProductResponseDTO {
     private Integer stockQuantity;
     private String image;
     private Boolean isDeleted;
+    @JsonIgnore
     private LocalDateTime createdAt;
+    @JsonIgnore
     private LocalDateTime updatedAt;
 }
