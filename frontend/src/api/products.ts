@@ -43,29 +43,6 @@ export const productsApi = {
     const response = await apiClient.get<ApiResponse<Product>>(`/products/${productId}`);
     return response.data.data;
   },
-
-  /**
-   * Create product (admin only)
-   */
-  createProduct: async (data: any): Promise<Product> => {
-    const response = await apiClient.post<ApiResponse<Product>>('/products', data);
-    return response.data.data;
-  },
-
-  /**
-   * Update product (admin only)
-   */
-  updateProduct: async (id: number, data: any): Promise<Product> => {
-    const response = await apiClient.put<ApiResponse<Product>>(`/products/${id}`, data);
-    return response.data.data;
-  },
-
-  /**
-   * Delete product (admin only)
-   */
-  deleteProduct: async (id: number): Promise<void> => {
-    await apiClient.delete(`/products/${id}`);
-  },
 };
 
 /**
@@ -100,6 +77,22 @@ export const useProductDetail = (productId: number) => {
     enabled: !!productId,
     staleTime: 0, // Always fresh
   });
+};
+
+/**
+ * Create product (admin only) - standalone export
+ */
+export const createProduct = async (data: any): Promise<Product> => {
+  const response = await apiClient.post<ApiResponse<Product>>('/products', data);
+  return response.data.data;
+};
+
+/**
+ * Update product (admin only) - standalone export
+ */
+export const updateProduct = async (id: number, data: any): Promise<Product> => {
+  const response = await apiClient.put<ApiResponse<Product>>(`/products/${id}`, data);
+  return response.data.data;
 };
 
 /**

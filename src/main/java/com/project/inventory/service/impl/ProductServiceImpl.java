@@ -72,6 +72,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> getProductsByFilters(String category, String search, Double minPrice, Double maxPrice, Pageable pageable) {
+        log.debug("Fetching products with filters - category: {}, search: {}, price: {}-{}", category, search, minPrice, maxPrice);
+        
+        // Query with filters
+        Page<Product> productPage = productRepository.findByFilters(category, search, minPrice, maxPrice, pageable);
+
+        return productPage.map(this::mapToResponseDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ProductResponseDTO getProductById(Long id) {
         log.debug("Fetching product by ID: {}", id);
         
@@ -178,7 +189,8 @@ public class ProductServiceImpl implements ProductService {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .stockQuantity(product.getStockQuantity())
-                .image(product.getImage())
+                .imageUrl(product.getImage())
+                .category(product.getCategory())
                 .isDeleted(product.getIsDeleted())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

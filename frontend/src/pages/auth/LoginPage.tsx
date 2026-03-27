@@ -2,33 +2,33 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import authApi from '@api/auth'
-import { validateEmail, validatePassword } from '@utils/validators'
+import { validatePassword } from '@utils/validators'
 import { ApiError } from '@types'
 
 interface FormErrors {
-  email?: string
+  username?: string
   password?: string
   submit?: string
 }
 
 /**
  * Login Page
- * Handles user authentication with email and password
+ * Handles user authentication with username and password
  * On success: stores JWT token + user in Zustand + redirects to /shop/products
  */
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<FormErrors>({})
   const [showPassword, setShowPassword] = useState(false)
 
   // Login mutation with React Query
   const loginMutation = useMutation({
-    mutationFn: () => authApi.login({ email, password }),
+    mutationFn: () => authApi.login({ username, password }),
     onSuccess: () => {
       // Clear form
-      setEmail('')
+      setUsername('')
       setPassword('')
       setErrors({})
       // Redirect to products page
@@ -36,8 +36,16 @@ const LoginPage: React.FC = () => {
     },
     onError: (error: any) => {
       const apiError = error.response?.data as ApiError | undefined
+      const errorMessage = apiError?.message || 'Login failed. Please try again.'
+      
+      // Convert Spring Security error to user-friendly message
+      let displayMessage = errorMessage
+      if (errorMessage.includes('Bad Credentials') || errorMessage.includes('Unauthorized')) {
+        displayMessage = 'Invalid username or password'
+      }
+      
       setErrors({
-        submit: apiError?.message || 'Login failed. Please try again.',
+        submit: displayMessage,
       })
     },
   })
@@ -48,10 +56,8 @@ const LoginPage: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
 
-    if (!email) {
-      newErrors.email = 'Email is required'
-    } else if (!validateEmail(email)) {
-      newErrors.email = 'Invalid email address'
+    if (!username) {
+      newErrors.username = 'Username is required'
     }
 
     if (!password) {
@@ -88,25 +94,25 @@ const LoginPage: React.FC = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email Field */}
+          {/* Username Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              Username
             </label>
             <input
-              type="email"
-              value={email}
+              type="text"
+              value={username}
               onChange={(e) => {
-                setEmail(e.target.value)
-                if (errors.email) setErrors({ ...errors, email: undefined })
+                setUsername(e.target.value)
+                if (errors.username) setErrors({ ...errors, username: undefined })
               }}
-              placeholder="you@example.com"
+              placeholder="admin3, user1, or user2"
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? 'border-red-500' : 'border-gray-300'
+                errors.username ? 'border-red-500' : 'border-gray-300'
               }`}
               disabled={loginMutation.isPending}
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
           </div>
 
           {/* Password Field */}

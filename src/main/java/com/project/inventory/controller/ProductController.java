@@ -59,24 +59,36 @@ public class ProductController {
     }
 
     @GetMapping
-    @Cacheable(value = "products", cacheManager = "cacheManager")
     @Transactional(readOnly = true)
-    @Operation(summary = "List all products", description = "Get paginated list of products (cached, 10s TTL)")
+    @Operation(summary = "List all products with optional filters", description = "Get paginated list of products with category, search, and price filters")
     public ResponseEntity<ApiResponse<Page<ProductResponseDTO>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
     ) {
-        log.debug("Fetching all products with pagination - page: {}, size: {}", page, size);
+        log.debug("Fetching products - page: {}, size: {}, category: {}, search: {}, price: {}-{}", 
+                page, size, category, search, minPrice, maxPrice);
         
         // Create sort and pageable objects
         Sort.Direction direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
+        // Determine if filters are provided
+        boolean hasFilters = category != null || search != null || minPrice != null || maxPrice != null;
+        
         // Fetch data from service
-        Page<ProductResponseDTO> products = productService.getAllProducts(pageable);
+        Page<ProductResponseDTO> products;
+        if (hasFilters) {
+            products = productService.getProductsByFilters(category, search, minPrice, maxPrice, pageable);
+        } else {
+            products = productService.getAllProducts(pageable);
+        }
 
         // Wrap in API response
         ApiResponse<Page<ProductResponseDTO>> response = ApiResponse.<Page<ProductResponseDTO>>builder()

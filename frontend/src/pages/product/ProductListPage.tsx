@@ -36,7 +36,7 @@ const ProductListPage: React.FC = () => {
   })
 
   // Sample categories (in real app, fetch from API)
-  const categories = ['all', 'Electronics', 'Clothing', 'Books', 'Home & Garden']
+  const categories = ['all', 'Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books']
 
   // Calculate stats
   const totalProducts = data?.totalElements || 0

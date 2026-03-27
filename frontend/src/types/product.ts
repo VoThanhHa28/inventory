@@ -4,7 +4,8 @@ export interface Product {
   description: string;
   price: number;
   stockQuantity: number;
-  image?: string;
+  imageUrl?: string;
+  category?: string;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -15,7 +16,7 @@ export interface CreateProductRequest {
   description: string;
   price: number;
   stockQuantity: number;
-  image?: string;
+  imageUrl?: string;
 }
 
 export interface UpdateProductRequest extends CreateProductRequest {}

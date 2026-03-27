@@ -10,6 +10,8 @@ public interface ProductService {
 
     Page<ProductResponseDTO> getAllProducts(Pageable pageable);
 
+    Page<ProductResponseDTO> getProductsByFilters(String category, String search, Double minPrice, Double maxPrice, Pageable pageable);
+
     ProductResponseDTO getProductById(Long id);
 
     ProductResponseDTO updateProduct(Long id, ProductRequestDTO request);

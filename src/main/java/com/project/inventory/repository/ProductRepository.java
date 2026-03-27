@@ -61,4 +61,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE id = :productId AND stock_quantity >= :quantity AND is_deleted = false", nativeQuery = true)
     int deductStock(@Param("productId") Long productId, @Param("quantity") Integer quantity);
 
+    /**
+     * Find products with filters: category, search, price range
+     */
+    @Query("SELECT p FROM Product p WHERE p.isDeleted = false " +
+            "AND (:category IS NULL OR :category = 'all' OR p.category = :category) " +
+            "AND (:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)")
+    Page<Product> findByFilters(
+            @Param("category") String category,
+            @Param("search") String search,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable
+    );
+
 }

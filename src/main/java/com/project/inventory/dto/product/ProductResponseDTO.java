@@ -17,7 +17,8 @@ public class ProductResponseDTO {
     private String description;
     private Double price;
     private Integer stockQuantity;
-    private String image;
+    private String imageUrl;
+    private String category;
     private Boolean isDeleted;
     @JsonIgnore
     private LocalDateTime createdAt;
