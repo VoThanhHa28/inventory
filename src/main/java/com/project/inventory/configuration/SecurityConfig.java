@@ -32,8 +32,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers("/api/auth/**", "/api/uploads/**").permitAll()
+                        // Public read-only product endpoints (users can browse before login)
+                        .requestMatchers("GET", "/api/products", "/api/products/**").permitAll()
+                        // Swagger/API docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
                 // THÊM 2 DÒNG CỰC KỲ QUAN TRỌNG NÀY:
