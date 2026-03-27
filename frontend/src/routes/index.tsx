@@ -11,6 +11,10 @@ import AdminLayout from '@layouts/AdminLayout'
 import LoginPage from '@pages/auth/LoginPage'
 import RegisterPage from '@pages/auth/RegisterPage'
 
+// Product page imports
+import ProductListPage from '@pages/product/ProductListPage'
+import ProductDetailPage from '@pages/product/ProductDetailPage'
+
 // Placeholder components (will be implemented)
 const NotFoundPage = () => <div className="p-8 text-center">404 - Page Not Found</div>
 
@@ -55,8 +59,8 @@ const Routes = () => {
         }
       >
         {/* Products */}
-        {/* <Route path="/shop/products" element={<ProductListPage />} /> */}
-        {/* <Route path="/shop/products/:id" element={<ProductDetailPage />} /> */}
+        <Route path="/shop/products" element={<ProductListPage />} />
+        <Route path="/shop/products/:productId" element={<ProductDetailPage />} />
         
         {/* Cart & Orders */}
         {/* <Route path="/shop/cart" element={<CartPage />} /> */}
