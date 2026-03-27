@@ -23,6 +23,18 @@ services:
       retries: 5
 
   # =============================================
+  # Redis — Distributed Shared Cache
+  # app1 và app2 đều kết nối vào đây
+  # =============================================
+  redis:
+    image: redis:7-alpine
+    container_name: inventory_redis
+    restart: always
+    ports:
+      - "6380:6379"           # 6380 local (avoid conflict if another Redis is on 6379)
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # =============================================
   # Spring Boot App Instance 1
   # =============================================
   app1:
@@ -35,9 +47,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: "1234"
       JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       JWT_EXPIRATION: 86400000
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       mysqldb:
         condition: service_healthy
+      redis:
+        condition: service_started
     expose:
       - "8080"              # Only exposed to nginx internally, not to host
 
@@ -54,9 +70,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: "1234"
       JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       JWT_EXPIRATION: 86400000
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       mysqldb:
         condition: service_healthy
+      redis:
+        condition: service_started
     expose:
       - "8080"
 

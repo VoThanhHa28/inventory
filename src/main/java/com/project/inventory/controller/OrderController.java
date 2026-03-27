@@ -19,6 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -63,7 +65,13 @@ public class OrderController {
     }
 
     @GetMapping("/my-orders")
-    @Operation(summary = "Danh sách đơn hàng của tôi", description = "Lấy tất cả đơn hàng của người dùng hiện tại")
+    @Cacheable(
+        value = "userOrders",
+        key = "T(java.lang.String).format('my-orders:%d:page:%d:size:%d', " +
+              "@T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getPrincipal().id, " +
+              "#page, #size)"
+    )
+    @Operation(summary = "Danh sách đơn hàng của tôi", description = "Lấy tất cả đơn hàng của người dùng hiện tại (cached 60s)")
     public ResponseEntity<ApiResponse<Page<OrderResponseDTO>>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -83,6 +91,7 @@ public class OrderController {
 
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "userOrders", allEntries = true)  // Clear all user order caches on status update
     @Operation(summary = "Cập nhật trạng thái đơn hàng", description = "Cập nhật trạng thái đơn hàng (chỉ admin) - tự động hoàn lại tồn kho nếu hủy")
     public ResponseEntity<ApiResponse<OrderResponseDTO>> updateOrderStatus(
             @PathVariable Long orderId,

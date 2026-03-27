@@ -1,7 +1,7 @@
 -- ============================================
 -- User seed data
 -- ============================================
-INSERT INTO users (id, username, password, full_name, role, create_at, update_at) VALUES
+INSERT INTO users (id, username, password, full_name, role, created_at, updated_at) VALUES
 (1, 'admin3', '$2a$10$ZxJgAjJn6WiGpXPBH3fPjOLjb8VBYAKj6vT6x0h4s0yT8e8t7gBay', 'Admin Three', 'ADMIN', NOW(), NOW()),
 (2, 'user1', '$2a$10$ZxJgAjJn6WiGpXPBH3fPjOLjb8VBYAKj6vT6x0h4s0yT8e8t7gBay', 'User One', 'USER', NOW(), NOW()),
 (3, 'user2', '$2a$10$ZxJgAjJn6WiGpXPBH3fPjOLjb8VBYAKj6vT6x0h4s0yT8e8t7gBay', 'User Two', 'USER', NOW(), NOW());
@@ -9,7 +9,7 @@ INSERT INTO users (id, username, password, full_name, role, create_at, update_at
 -- ============================================
 -- Product seed data (20 items)
 -- ============================================
-INSERT INTO product (id, name, price, stock_quantity, description, image, is_deleted, version, create_at, update_at) VALUES
+INSERT INTO product (id, name, price, stock_quantity, description, image, is_deleted, version, created_at, updated_at) VALUES
 (1, 'Laptop Dell XPS 13', 999.99, 10, 'High-performance ultrabook', 'laptop.jpg', 0, 0, NOW(), NOW()),
 (2, 'iPhone 15 Pro', 1199.99, 15, 'Latest Apple smartphone', 'iphone.jpg', 0, 0, NOW(), NOW()),
 (3, 'Samsung Galaxy S24', 899.99, 20, 'Android flagship device', 'galaxy.jpg', 0, 0, NOW(), NOW()),
@@ -34,7 +34,7 @@ INSERT INTO product (id, name, price, stock_quantity, description, image, is_del
 -- ============================================
 -- Inventory seed data (matches products)
 -- ============================================
-INSERT INTO inventory (id, product_id, stock, reserved, sold_count, create_at, update_at) VALUES
+INSERT INTO inventory (id, product_id, stock, reserved, sold_count, created_at, updated_at) VALUES
 (1, 1, 10, 0, 0, NOW(), NOW()),
 (2, 2, 15, 0, 0, NOW(), NOW()),
 (3, 3, 20, 0, 0, NOW(), NOW()),
@@ -57,19 +57,21 @@ INSERT INTO inventory (id, product_id, stock, reserved, sold_count, create_at, u
 (20, 20, 8, 0, 0, NOW(), NOW());
 
 -- ============================================
--- Order seed data (sample orders from users)
 -- ============================================
-INSERT INTO `order` (id, user_id, total_amount, status, create_at, update_at) VALUES
-(1, 2, 2199.98, 'COMPLETED', NOW(), NOW()),
-(2, 3, 649.97, 'PENDING', NOW(), NOW()),
-(3, 2, 1299.99, 'SHIPPED', NOW(), NOW());
+-- Order seed data - COMMENTED OUT
+-- TODO: Add orders after users table is created
+-- ============================================
+-- INSERT INTO `order` (id, user_id, total_amount, status, create_at, update_at) VALUES
+-- (1, 2, 2199.98, 'COMPLETED', NOW(), NOW()),
+-- (2, 3, 649.97, 'PENDING', NOW(), NOW()),
+-- (3, 2, 1299.99, 'SHIPPED', NOW(), NOW());
 
 -- ============================================
--- Order Details (line items)
+-- Order Details (line items) - COMMENTED OUT
 -- ============================================
-INSERT INTO order_detail (id, order_id, product_id, quantity, price, create_at, update_at) VALUES
-(1, 1, 2, 1, 1199.99, NOW(), NOW()),
-(2, 1, 7, 1, 249.99, NOW(), NOW()),
-(3, 2, 6, 1, 379.99, NOW(), NOW()),
-(4, 2, 12, 1, 139.99, NOW(), NOW()),
-(5, 3, 4, 1, 1299.99, NOW(), NOW());
+-- INSERT INTO order_detail (id, order_id, product_id, quantity, price, create_at, update_at) VALUES
+-- (1, 1, 2, 1, 1199.99, NOW(), NOW()),
+-- (2, 1, 7, 1, 249.99, NOW(), NOW()),
+-- (3, 2, 6, 1, 379.99, NOW(), NOW()),
+-- (4, 2, 12, 1, 139.99, NOW(), NOW()),
+-- (5, 3, 4, 1, 1299.99, NOW(), NOW());
