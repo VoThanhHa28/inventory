@@ -44,14 +44,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div
       onClick={handleViewDetails}
-      className="group cursor-pointer bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
+      className="group cursor-pointer bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 h-full flex flex-col"
     >
       {/* Image Container */}
       <div className="relative overflow-hidden bg-gray-100 aspect-square">
         <img
           src={product.imageUrl || 'https://via.placeholder.com/400'}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+          className="w-full h-full object-contain bg-white group-hover:scale-105 transition-transform duration-200"
+          loading="lazy"
         />
 
         {/* Discount Badge */}
@@ -75,12 +76,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 flex flex-col flex-grow">
         {/* Category */}
         <p className="text-xs text-gray-500 uppercase tracking-wide">{product.category}</p>
 
         {/* Product Name - Truncate to 2 lines */}
-        <h3 className="text-base font-semibold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors">
+        <h3 className="text-base font-semibold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors min-h-[2.5rem]">
           {product.name}
         </h3>
 
@@ -93,8 +94,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         )}
 
-        {/* Price */}
-        <div className="space-y-1">
+        {/* Price - Flex grow to push button to bottom */}
+        <div className="space-y-1 flex-grow">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-gray-900">
               ${product.price.toFixed(2)}
