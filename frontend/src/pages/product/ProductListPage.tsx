@@ -58,47 +58,61 @@ const ProductListPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Our Products
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3">
+            Explore Our Products
           </h1>
-          <p className="text-gray-600">
-            Discover our wide selection of quality products
+          <p className="text-blue-50 text-lg max-w-2xl">
+            Discover thousands of premium products across all categories. Find exactly what you're looking for.
           </p>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-10"
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Filters */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar - Filters */}
           <aside className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-20 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-20 space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  Filters
+                </h2>
+              </div>
+
               {/* Search */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Search Products
+                <label className="block text-sm font-semibold text-gray-900 mb-2.5">
+                  🔍 Search Products
                 </label>
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search by name..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
 
               {/* Category Filter */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Category
+              <div className="border-t pt-6">
+                <label className="block text-sm font-semibold text-gray-900 mb-3.5">
+                  📦 Category
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {categories.map((cat) => (
-                    <label key={cat} className="flex items-center gap-3 cursor-pointer">
+                    <label key={cat} className="flex items-center gap-3 cursor-pointer p-2.5 hover:bg-blue-50 rounded-lg transition-colors">
                       <input
                         type="radio"
                         name="category"
@@ -108,46 +122,65 @@ const ProductListPage: React.FC = () => {
                           setSelectedCategory(e.target.value)
                           setCurrentPage(1)
                         }}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-blue-600 accent-blue-600"
                       />
-                      <span className="text-sm text-gray-700 capitalize">{cat}</span>
+                      <span className="text-sm text-gray-700 font-medium capitalize">
+                        {cat === 'all' ? '✨ All Products' : cat}
+                      </span>
                     </label>
                   ))}
                 </div>
               </div>
 
               {/* Price Range Filter */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Price Range
+              <div className="border-t pt-6">
+                <label className="block text-sm font-semibold text-gray-900 mb-3.5">
+                  💰 Price Range
                 </label>
-                <div className="space-y-3">
+                <div className="space-y-3.5 bg-gray-50 p-4 rounded-lg">
                   <div>
-                    <label className="text-xs text-gray-600 mb-1 block">Min Price</label>
+                    <label className="text-xs font-semibold text-gray-600 mb-2 block">Min: ${priceRange[0]}</label>
                     <input
                       type="number"
                       min="0"
-                      max="1000"
+                      max="10000"
                       value={priceRange[0]}
                       onChange={(e) => {
                         setPriceRange([Number(e.target.value), priceRange[1]])
                         setCurrentPage(1)
                       }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-600 mb-1 block">Max Price</label>
+                    <label className="text-xs font-semibold text-gray-600 mb-2 block">Max: ${priceRange[1]}</label>
                     <input
                       type="number"
                       min="0"
-                      max="1000"
+                      max="10000"
                       value={priceRange[1]}
                       onChange={(e) => {
                         setPriceRange([priceRange[0], Number(e.target.value)])
                         setCurrentPage(1)
                       }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset Button */}
+              <button
+                onClick={handleResetFilters}
+                className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-105 text-sm font-semibold shadow-sm"
+              >
+                ↺ Reset All Filters
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Content - Products Grid */}
+          <main className="lg:col-span-3">
                     />
                   </div>
                   <div className="text-xs text-gray-600">
@@ -169,22 +202,43 @@ const ProductListPage: React.FC = () => {
           {/* Main Content - Products Grid */}
           <main className="lg:col-span-3">
             {/* Results Info */}
-            <div className="mb-6">
-              <p className="text-sm text-gray-600">
-                Showing {data?.content?.length || 0} of {totalProducts} products
-              </p>
+            <div className="mb-8">
+              <div className="flex flex-wrap items-center justify-between gap-4 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Found <span className="text-blue-600">{totalProducts}</span> products
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Showing {data?.content?.length || 0} per page
+                  </p>
+                </div>
+                {(selectedCategory !== 'all' || searchQuery || priceRange[0] > 0 || priceRange[1] < 10000) && (
+                  <button
+                    onClick={handleResetFilters}
+                    className="px-3 py-1.5 bg-white border border-blue-300 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-50 transition-colors"
+                  >
+                    Clear Filters ×
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Error State */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3 mb-6">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-red-900">Error loading products</h3>
-                  <p className="text-sm text-red-700 mt-1">
-                    {error instanceof Error ? error.message : 'Failed to fetch products'}
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-4 mb-8">
+                <div className="text-red-600 text-2xl flex-shrink-0">⚠️</div>
+                <div className="flex-grow">
+                  <h3 className="font-semibold text-red-900">Failed to load products</h3>
+                  <p className="text-sm text-red-700 mt-2">
+                    {error instanceof Error ? error.message : 'Please try again or contact support'}
                   </p>
                 </div>
+                <button
+                  onClick={handleResetFilters}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors"
+                >
+                  Retry
+                </button>
               </div>
             )}
 
@@ -199,17 +253,17 @@ const ProductListPage: React.FC = () => {
 
             {/* Empty State */}
             {!isLoading && (!data?.content || data.content.length === 0) && (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-5xl mb-4">📦</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-600 mb-6">
-                  Try adjusting your filters or search query
+              <div className="text-center py-20">
+                <div className="text-6xl mb-6">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">No products found</h3>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                  We couldn't find any products matching your filters. Try adjusting your search criteria.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                 >
-                  Clear Filters
+                  Clear All Filters
                 </button>
               </div>
             )}
@@ -225,12 +279,14 @@ const ProductListPage: React.FC = () => {
 
             {/* Pagination */}
             {!isLoading && totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                disabled={isLoading}
-              />
+              <div className="mt-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  disabled={isLoading}
+                />
+              </div>
             )}
           </main>
         </div>
