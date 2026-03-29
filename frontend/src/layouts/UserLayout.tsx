@@ -74,7 +74,10 @@ const UserLayout: React.FC = () => {
             <>
               <div className="my-4 border-t border-outline-variant/20"></div>
               <button
-                onClick={togglePreviewMode}
+                onClick={() => {
+                  togglePreviewMode()
+                  setTimeout(() => navigate('/admin/dashboard'), 100)
+                }}
                 className="w-full flex items-center gap-3 px-4 py-3 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors font-inter font-medium tracking-wide uppercase text-[11px]"
               >
                 <span className="material-symbols-outlined">arrow_back</span>

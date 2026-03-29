@@ -71,12 +71,12 @@ const ProductListPage: React.FC = () => {
     <div className="bg-surface font-body text-on-surface antialiased">
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm shadow-blue-500/5">
-        <div className="flex justify-between items-center h-16 px-6 lg:px-12 max-w-full mx-auto">
+        <div className="flex justify-between items-center h-16 px-6 lg:px-12">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">inventory_2</span>
             <h1 className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white font-headline">InventoryCore</h1>
           </div>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8 flex-1 ml-16">
             <a className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 py-5 font-headline text-sm tracking-wide" href="/shop/products">
               Products
             </a>
@@ -87,7 +87,7 @@ const ProductListPage: React.FC = () => {
               My Orders
             </a>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-auto">
             <button className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-lg p-2 transition-colors">
               <span className="material-symbols-outlined text-on-surface-variant">search</span>
             </button>
@@ -100,7 +100,7 @@ const ProductListPage: React.FC = () => {
 
       <div className="flex pt-16 min-h-screen">
         {/* Sidebar */}
-        <aside className="hidden lg:block h-screen w-64 fixed left-0 top-16 bg-slate-50 dark:bg-slate-950 flex flex-col py-8 pr-4 overflow-y-auto">
+        <aside className="hidden lg:block h-screen w-64 fixed left-0 top-16 bg-slate-50 dark:bg-slate-950 flex flex-col py-6 px-4 overflow-y-auto">
           <div className="px-6 mb-8">
             <p className="font-manrope font-bold tracking-wide text-xs uppercase text-slate-500 dark:text-slate-400">
               Inventory Management
@@ -198,7 +198,7 @@ const ProductListPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64 p-6 lg:p-12 bg-surface">
+        <main className="flex-1 lg:ml-64 p-6 lg:p-8 bg-surface">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
@@ -238,16 +238,28 @@ const ProductListPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10">
-            {isLoading ? (
-              <div className="col-span-full text-center py-12">Loading...</div>
-            ) : products.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <p className="text-on-surface-variant">No products found</p>
+          {/* Loading State */}
+          {isLoading && (
+            <div className="col-span-full text-center py-20">
+              <div className="inline-flex flex-col items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                <p className="text-on-surface-variant font-medium">Loading products...</p>
               </div>
-            ) : (
-              products.map((product) => {
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && products.length === 0 && (
+            <div className="col-span-full text-center py-20">
+              <div className="text-6xl mb-4">📦</div>
+              <p className="text-on-surface-variant font-medium text-lg">No products found</p>
+              <p className="text-on-surface-variant text-sm mt-2">Try adjusting your filters or search</p>
+            </div>
+          )}
+
+          {/* Product Grid */}
+          {!isLoading && products.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10">
                 const stockStatus = getStockStatus(product.stockQuantity)
                 const sku = generateSKU(product.id, product.category)
 
@@ -298,9 +310,9 @@ const ProductListPage: React.FC = () => {
                     </div>
                   </div>
                 )
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
 
           {/* Pagination */}
           {totalPages > 1 && (
