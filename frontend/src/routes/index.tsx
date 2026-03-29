@@ -31,7 +31,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; requiredRole?: 'ADMI
   children,
   requiredRole,
 }) => {
-  const { isAuthenticated, isAdmin } = useAuthStore()
+  const { isAuthenticated, isAdmin, previewAsUser } = useAuthStore()
 
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" replace />
@@ -39,6 +39,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; requiredRole?: 'ADMI
 
   if (requiredRole === 'ADMIN' && !isAdmin()) {
     return <Navigate to="/" replace />
+  }
+
+  // For USER role routes: allow regular users or admins in preview mode
+  if (requiredRole === 'USER' && isAdmin() && !previewAsUser) {
+    return <Navigate to="/admin/dashboard" replace />
   }
 
   return <>{children}</>
