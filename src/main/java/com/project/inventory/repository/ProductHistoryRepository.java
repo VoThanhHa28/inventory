@@ -1,6 +1,7 @@
 package com.project.inventory.repository;
 
 import com.project.inventory.entity.ProductHistory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +20,11 @@ public interface ProductHistoryRepository extends JpaRepository<ProductHistory, 
      * Ordered by latest changes first
      */
     List<ProductHistory> findByProductIdOrderByChangedAtDesc(Long productId);
+
+    /**
+     * Find all history records across all products
+     * Ordered by latest changes first
+     * Used for dashboard recent activity feed
+     */
+    List<ProductHistory> findAllByOrderByChangedAtDesc(Pageable pageable);
 }

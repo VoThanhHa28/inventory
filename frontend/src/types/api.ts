@@ -24,3 +24,20 @@ export interface ApiError {
   details?: Record<string, string[]>;
   timestamp?: string;
 }
+
+// Dashboard Types
+export interface DashboardStats {
+  totalProducts: number;
+  lowStockCount: number;
+  totalSales: number;
+  efficiencyPercentage: number;
+}
+
+export interface ActivityItem {
+  productId: number;
+  productName: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  changedBy: string;
+  changedAt: string; // ISO datetime
+}
+

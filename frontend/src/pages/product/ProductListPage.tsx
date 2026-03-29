@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { productsApi } from '@/api'
 import { ProductCardSkeleton, Pagination } from '@/components/ui'
 import ProductCard from '@/components/product/ProductCard'
-import { AlertCircle } from 'lucide-react'
 
 /**
  * ProductListPage
@@ -14,7 +13,7 @@ const ProductListPage: React.FC = () => {
   // State
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000])
   const [searchQuery, setSearchQuery] = useState('')
   const pageSize = 12
 
@@ -52,7 +51,7 @@ const ProductListPage: React.FC = () => {
   // Handle filter reset
   const handleResetFilters = () => {
     setSelectedCategory('all')
-    setPriceRange([0, 1000])
+    setPriceRange([0, 10000])
     setSearchQuery('')
     setCurrentPage(1)
   }
@@ -71,10 +70,7 @@ const ProductListPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-10"
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar - Filters */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Filters */}
           <aside className="lg:col-span-1">
@@ -175,26 +171,6 @@ const ProductListPage: React.FC = () => {
                 className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-105 text-sm font-semibold shadow-sm"
               >
                 ↺ Reset All Filters
-              </button>
-            </div>
-          </aside>
-
-          {/* Main Content - Products Grid */}
-          <main className="lg:col-span-3">
-                    />
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    ${priceRange[0]} - ${priceRange[1]}
-                  </div>
-                </div>
-              </div>
-
-              {/* Reset Button */}
-              <button
-                onClick={handleResetFilters}
-                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
-              >
-                Reset Filters
               </button>
             </div>
           </aside>

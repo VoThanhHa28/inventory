@@ -5,7 +5,6 @@ import { useAuthStore } from '@stores/authStore'
 // Layout imports
 import PublicLayout from '@layouts/PublicLayout'
 import UserLayout from '@layouts/UserLayout'
-import AdminLayout from '@layouts/AdminLayout'
 
 // Auth page imports
 import LoginPage from '@pages/auth/LoginPage'
@@ -14,6 +13,9 @@ import RegisterPage from '@pages/auth/RegisterPage'
 // Product page imports
 import ProductListPage from '@pages/product/ProductListPage'
 import ProductDetailPage from '@pages/product/ProductDetailPage'
+
+// Dashboard page imports
+import DashboardPage from '@pages/dashboard/DashboardPage'
 
 // Placeholder components (will be implemented)
 const NotFoundPage = () => <div className="p-8 text-center">404 - Page Not Found</div>
@@ -44,11 +46,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; requiredRole?: 'ADMI
 const Routes = () => {
   return (
     <RouterRoutes>
-      {/* Public Routes */}
-      <Route element={<PublicLayout />}>
-        <Route path="/auth/login" element={<LoginPage />} />
-        <Route path="/auth/register" element={<RegisterPage />} />
-      </Route>
+      {/* Auth Routes - Standalone (no layout wrapper) */}
+      <Route path="/auth/login" element={<LoginPage />} />
+      <Route path="/auth/register" element={<RegisterPage />} />
 
       {/* User Routes */}
       <Route
@@ -70,23 +70,15 @@ const Routes = () => {
         {/* <Route path="/shop/orders/:id" element={<OrderDetailPage />} /> */}
       </Route>
 
-      {/* Admin Routes */}
+      {/* Admin Routes - Dashboard (Self-contained) */}
       <Route
+        path="/admin/dashboard"
         element={
           <ProtectedRoute requiredRole="ADMIN">
-            <AdminLayout />
+            <DashboardPage />
           </ProtectedRoute>
         }
-      >
-        {/* Admin Dashboard & Management */}
-        {/* <Route path="/admin/dashboard" element={<AdminDashboardPage />} /> */}
-        {/* <Route path="/admin/products" element={<AdminProductsPage />} /> */}
-        {/* <Route path="/admin/products/create" element={<AdminProductFormPage />} /> */}
-        {/* <Route path="/admin/products/:id/edit" element={<AdminProductFormPage />} /> */}
-        {/* <Route path="/admin/inventory" element={<AdminInventoryPage />} /> */}
-        {/* <Route path="/admin/orders" element={<AdminOrdersPage />} /> */}
-        {/* <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} /> */}
-      </Route>
+      />
 
       {/* Catch-all */}
       <Route path="*" element={<NotFoundPage />} />
