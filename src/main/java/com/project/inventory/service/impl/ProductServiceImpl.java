@@ -11,6 +11,8 @@ import com.project.inventory.repository.ProductRepository;
 import com.project.inventory.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public ProductResponseDTO createProduct(ProductRequestDTO request) {
         log.info("Creating new product: {}", request.getName());
         
@@ -61,6 +64,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "'all-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
         log.debug("Fetching all active products with pagination");
         
@@ -72,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "'filtered-' + (#category ?: 'all') + '-' + (#search ?: 'none') + '-' + #minPrice + '-' + #maxPrice + '-' + #pageable.pageNumber")
     public Page<ProductResponseDTO> getProductsByFilters(String category, String search, Double minPrice, Double maxPrice, Pageable pageable) {
         log.debug("Fetching products with filters - category: {}, search: {}, price: {}-{}", category, search, minPrice, maxPrice);
         
@@ -83,6 +88,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "#id")
     public ProductResponseDTO getProductById(Long id) {
         log.debug("Fetching product by ID: {}", id);
         
@@ -98,6 +104,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO request) {
         log.info("Updating product with ID: {}", id);
         
@@ -124,6 +131,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id) {
         log.info("Soft deleting product with ID: {}", id);
         

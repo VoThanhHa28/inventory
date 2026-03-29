@@ -4,6 +4,7 @@ import com.project.inventory.dto.auth.LoginRequestDTO;
 import com.project.inventory.dto.auth.LoginResponseDTO;
 import com.project.inventory.dto.auth.RegisterRequestDTO;
 import com.project.inventory.dto.auth.RegisterResponseDTO;
+import com.project.inventory.dto.auth.UserDTO;
 import com.project.inventory.entity.Role;
 import com.project.inventory.entity.User;
 import com.project.inventory.repository.UserRepository;
@@ -53,9 +54,20 @@ public class AuthenticationService {
         // Generate JWT token for authenticated user
         var jwtToken = jwtService.generateToken(user);
 
-        // Return token in response DTO
+        // Convert User entity to UserDTO (without password)
+        var userDTO = UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+
+        // Return token and user info in response DTO
         return LoginResponseDTO.builder()
                 .token(jwtToken)
+                .user(userDTO)
                 .build();
     }
 }
