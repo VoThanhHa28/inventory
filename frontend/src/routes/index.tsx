@@ -13,6 +13,7 @@ import RegisterPage from '@pages/auth/RegisterPage'
 // Product page imports
 import ProductListPage from '@pages/product/ProductListPage'
 import ProductDetailPage from '@pages/product/ProductDetailPage'
+import CartPage from '@pages/shop/CartPage'
 
 // Dashboard page imports
 import DashboardPage from '@pages/dashboard/DashboardPage'
@@ -64,6 +65,7 @@ const Routes = () => {
         {/* Products */}
         <Route path="/shop/products" element={<ProductListPage />} />
         <Route path="/shop/products/:productId" element={<ProductDetailPage />} />
+        <Route path="/shop/cart" element={<CartPage />} />
         
         {/* Cart & Orders */}
         {/* <Route path="/shop/cart" element={<CartPage />} /> */}
