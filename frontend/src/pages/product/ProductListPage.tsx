@@ -26,6 +26,8 @@ const ProductListPage: React.FC = () => {
   // Fetch products with React Query
   const { data, isLoading } = useQuery({
     queryKey: ['products', currentPage, pageSize, selectedCategory, minPrice, maxPrice, searchQuery],
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in memory for 10 minutes
     queryFn: () =>
       productsApi.getProducts({
         page: currentPage,
@@ -35,7 +37,6 @@ const ProductListPage: React.FC = () => {
         maxPrice,
         search: searchQuery || undefined,
       }),
-    staleTime: 10 * 1000,
   })
 
   const products = data?.content || []
@@ -76,15 +77,15 @@ const ProductListPage: React.FC = () => {
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">inventory_2</span>
             <h1 className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white font-headline">InventoryCore</h1>
           </div>
-          <div className="flex items-center gap-6 ml-auto">
-            <nav className="hidden md:flex items-center gap-6">
-              <a className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 py-5 font-headline text-sm tracking-wide" href="/shop/products">
+          <div className="flex items-center gap-3 ml-auto">
+            <nav className="flex items-center gap-3">
+              <a className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/products">
                 Products
               </a>
-              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-sm tracking-wide" href="/shop/cart">
+              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/cart">
                 Cart
               </a>
-              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-sm tracking-wide" href="/shop/order-history">
+              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/order-history">
                 My Orders
               </a>
             </nav>
@@ -198,9 +199,9 @@ const ProductListPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64 p-6 lg:p-8 bg-surface">
+        <main className="flex-1 lg:ml-64 p-4 sm:p-6 bg-surface">
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div>
               <h2 className="text-4xl font-headline font-extrabold tracking-tight text-on-surface">Products</h2>
               <p className="text-on-surface-variant mt-2 font-body italic">
