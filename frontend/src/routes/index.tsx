@@ -17,6 +17,9 @@ import ProductDetailPage from '@pages/product/ProductDetailPage'
 // Dashboard page imports
 import DashboardPage from '@pages/dashboard/DashboardPage'
 
+// Admin page imports
+import AdminInventoryPage from '@pages/admin/AdminInventoryPage'
+
 // Placeholder components (will be implemented)
 const NotFoundPage = () => <div className="p-8 text-center">404 - Page Not Found</div>
 
@@ -76,6 +79,16 @@ const Routes = () => {
         element={
           <ProtectedRoute requiredRole="ADMIN">
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Admin Routes - Inventory (Self-contained) */}
+      <Route
+        path="/admin/inventory"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminInventoryPage />
           </ProtectedRoute>
         }
       />
