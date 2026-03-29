@@ -141,31 +141,22 @@ const DashboardPage: React.FC = () => {
             <span className="text-sm tracking-wider uppercase font-medium">Dashboard</span>
           </button>
 
-          {/* Products */}
+          {/* Inventory */}
+          <button
+            onClick={() => navigate('/admin/inventory')}
+            className="w-full flex items-center space-x-3 px-6 py-4 text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 rounded-lg transition-colors"
+          >
+            <span className="text-xl">📦</span>
+            <span className="text-sm tracking-wider uppercase font-medium">Inventory</span>
+          </button>
+
+          {/* View Store */}
           <button
             onClick={() => navigate('/shop/products')}
             className="w-full flex items-center space-x-3 px-6 py-4 text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 rounded-lg transition-colors"
           >
-            <span className="text-xl">📦</span>
-            <span className="text-sm tracking-wider uppercase font-medium">Products</span>
-          </button>
-
-          {/* Cart */}
-          <button
-            onClick={() => navigate('/shop/cart')}
-            className="w-full flex items-center space-x-3 px-6 py-4 text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 rounded-lg transition-colors"
-          >
-            <span className="text-xl">🛒</span>
-            <span className="text-sm tracking-wider uppercase font-medium">Cart</span>
-          </button>
-
-          {/* Orders */}
-          <button
-            onClick={() => navigate('/orders')}
-            className="w-full flex items-center space-x-3 px-6 py-4 text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 rounded-lg transition-colors"
-          >
-            <span className="text-xl">📋</span>
-            <span className="text-sm tracking-wider uppercase font-medium">My Orders</span>
+            <span className="text-xl">🛍️</span>
+            <span className="text-sm tracking-wider uppercase font-medium">View Store</span>
           </button>
         </nav>
 
