@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { productsApi } from '@/api'
 
@@ -11,29 +11,33 @@ const ProductListPage: React.FC = () => {
   
   // State
   const [currentPage, setCurrentPage] = useState(0)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [minPrice, setMinPrice] = useState(0)
-  const [maxPrice, setMaxPrice] = useState(5000)
   const [sortBy, setSortBy] = useState('newest')
   const pageSize = 12
 
-  // Categories
-  const categories = ['all', 'Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 'Hardware', 'Software', 'Logistics']
+  // Debounce search - reduce API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchInput])
 
   // Fetch products with React Query
   const { data, isLoading } = useQuery({
-    queryKey: ['products', currentPage, pageSize, selectedCategory, minPrice, maxPrice, searchQuery],
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    gcTime: 1000 * 60 * 10, // Keep in memory for 10 minutes
+    queryKey: ['products', currentPage, pageSize, selectedCategory, debouncedSearch],
+    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    gcTime: 1000 * 60 * 30, // Keep in memory for 30 minutes
+    retry: 2, // Retry failed requests 2 times
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     queryFn: () =>
       productsApi.getProducts({
         page: currentPage,
         size: pageSize,
         category: selectedCategory === 'all' ? undefined : selectedCategory,
-        minPrice,
-        maxPrice,
-        search: searchQuery || undefined,
+        search: debouncedSearch || undefined,
       }),
   })
 
@@ -47,10 +51,9 @@ const ProductListPage: React.FC = () => {
   }
 
   const handleResetFilters = () => {
-    setSearchQuery('')
+    setSearchInput('')
+    setDebouncedSearch('')
     setSelectedCategory('all')
-    setMinPrice(0)
-    setMaxPrice(5000)
     setCurrentPage(0)
   }
 
@@ -222,11 +225,8 @@ const ProductListPage: React.FC = () => {
                   className="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all placeholder:text-outline/70"
                   placeholder="Search product name or SKU..."
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                    setCurrentPage(0)
-                  }}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                 />
               </div>
               <div className="relative w-full sm:w-auto">
@@ -279,6 +279,8 @@ const ProductListPage: React.FC = () => {
                       <img
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
                         src={product.imageUrl || `https://via.placeholder.com/400x300?text=${product.id}`}
                       />
                     </div>
