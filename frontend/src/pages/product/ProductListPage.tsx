@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { productsApi } from '@/api'
-import { useNavigate } from 'react-router-dom'
 
 /**
  * ProductListPage
@@ -9,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
  * Updated design: InventoryCore template with filters, search, pagination, and API integration
  */
 const ProductListPage: React.FC = () => {
-  const navigate = useNavigate()
   
   // State
   const [currentPage, setCurrentPage] = useState(0)
@@ -72,23 +70,23 @@ const ProductListPage: React.FC = () => {
     <div className="bg-surface font-body text-on-surface antialiased">
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm shadow-blue-500/5">
-        <div className="flex justify-between items-center h-16 px-6 lg:px-12">
+        <div className="flex justify-between items-center h-16 px-6 lg:px-12 max-w-full mx-auto">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">inventory_2</span>
             <h1 className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white font-headline">InventoryCore</h1>
           </div>
-          <div className="flex items-center gap-3 ml-auto">
-            <nav className="flex items-center gap-3">
-              <a className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/products">
-                Products
-              </a>
-              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/cart">
-                Cart
-              </a>
-              <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-xs sm:text-sm tracking-wide whitespace-nowrap" href="/shop/order-history">
-                My Orders
-              </a>
-            </nav>
+          <nav className="hidden md:flex items-center gap-8">
+            <a className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 py-5 font-headline text-sm tracking-wide" href="/shop/products">
+              Products
+            </a>
+            <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-sm tracking-wide" href="/shop/cart">
+              Cart
+            </a>
+            <a className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors py-5 font-headline text-sm tracking-wide" href="/shop/order-history">
+              My Orders
+            </a>
+          </nav>
+          <div className="flex items-center gap-4">
             <button className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-lg p-2 transition-colors">
               <span className="material-symbols-outlined text-on-surface-variant">search</span>
             </button>
@@ -101,7 +99,7 @@ const ProductListPage: React.FC = () => {
 
       <div className="flex pt-16 min-h-screen">
         {/* Sidebar */}
-        <aside className="hidden lg:block h-screen w-64 fixed left-0 top-16 bg-slate-50 dark:bg-slate-950 flex flex-col py-6 px-4 overflow-y-auto">
+        <aside className="hidden lg:block h-screen w-64 fixed left-0 top-16 bg-slate-50 dark:bg-slate-950 flex flex-col py-8 pr-4 overflow-y-auto">
           <div className="px-6 mb-8">
             <p className="font-manrope font-bold tracking-wide text-xs uppercase text-slate-500 dark:text-slate-400">
               Inventory Management
@@ -199,9 +197,9 @@ const ProductListPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64 p-4 sm:p-6 bg-surface">
+        <main className="flex-1 lg:ml-64 p-6 lg:p-12 bg-surface">
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <h2 className="text-4xl font-headline font-extrabold tracking-tight text-on-surface">Products</h2>
               <p className="text-on-surface-variant mt-2 font-body italic">
@@ -292,7 +290,7 @@ const ProductListPage: React.FC = () => {
                       <div className="flex items-center justify-between mt-auto">
                         <div>
                           <p className="text-[10px] font-bold text-outline uppercase tracking-tighter">Price Per Unit</p>
-                          <p className="text-xl font-headline font-extrabold text-primary">
+                          <p className="text-xl font-headline font-extrabold text-on-primary-fixed">
                             ${product.price.toFixed(2)}
                           </p>
                         </div>
@@ -301,7 +299,7 @@ const ProductListPage: React.FC = () => {
                           className={`p-3 rounded-xl transition-all shadow-lg ${
                             product.stockQuantity === 0
                               ? 'bg-surface-container-high text-outline cursor-not-allowed'
-                              : 'bg-gradient-to-br from-primary to-blue-700 text-white hover:opacity-90 active:scale-95 shadow-primary/20'
+                              : 'signature-gradient text-white hover:opacity-90 active:scale-95 shadow-primary/20'
                           }`}
                         >
                           <span className="material-symbols-outlined block">
