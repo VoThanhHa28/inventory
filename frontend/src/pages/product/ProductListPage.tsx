@@ -113,6 +113,27 @@ const ProductListPage: React.FC = () => {
               <span className="material-symbols-outlined">grid_view</span>
               <span className="font-headline text-xs tracking-wide uppercase">Products</span>
             </a>
+            <a
+              className="flex items-center gap-4 py-3 px-6 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-r-full hover:translate-x-1 transition-transform duration-200"
+              href="/shop/cart"
+            >
+              <span className="material-symbols-outlined">shopping_cart</span>
+              <span className="font-headline text-xs tracking-wide uppercase">Cart</span>
+            </a>
+            <a
+              className="flex items-center gap-4 py-3 px-6 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-r-full hover:translate-x-1 transition-transform duration-200"
+              href="/shop/order-history"
+            >
+              <span className="material-symbols-outlined">package_2</span>
+              <span className="font-headline text-xs tracking-wide uppercase">My Orders</span>
+            </a>
+            <a
+              className="flex items-center gap-4 py-3 px-6 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-r-full hover:translate-x-1 transition-transform duration-200"
+              href="#"
+            >
+              <span className="material-symbols-outlined">settings</span>
+              <span className="font-headline text-xs tracking-wide uppercase">Settings</span>
+            </a>
           </nav>
 
           {/* Filters */}
@@ -140,50 +161,36 @@ const ProductListPage: React.FC = () => {
                 Categories
               </h3>
               <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                      selectedCategory === cat
-                        ? 'bg-primary text-white'
-                        : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
-                    }`}
-                  >
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Price Range */}
-            <div>
-              <h3 className="font-headline text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
-                Price Range
-              </h3>
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs text-on-surface-variant">Min: ${minPrice}</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="10000"
-                    value={minPrice}
-                    onChange={(e) => setMinPrice(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-on-surface-variant">Max: ${maxPrice}</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="10000"
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
+                <button
+                  onClick={() => setSelectedCategory('Hardware')}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                    selectedCategory === 'Hardware'
+                      ? 'bg-primary text-white'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  Hardware
+                </button>
+                <button
+                  onClick={() => setSelectedCategory('Software')}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                    selectedCategory === 'Software'
+                      ? 'bg-primary text-white'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  Software
+                </button>
+                <button
+                  onClick={() => setSelectedCategory('Logistics')}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                    selectedCategory === 'Logistics'
+                      ? 'bg-primary text-white'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  Logistics
+                </button>
               </div>
             </div>
 
@@ -302,7 +309,7 @@ const ProductListPage: React.FC = () => {
                               : 'signature-gradient text-white hover:opacity-90 active:scale-95 shadow-primary/20'
                           }`}
                         >
-                          <span className="material-symbols-outlined block">
+                          <span className="material-symbols-outlined block text-2xl font-bold" style={{ fontVariationSettings: "'FILL' 0, 'wght' 600" }}>
                             {product.stockQuantity === 0 ? 'remove_shopping_cart' : 'add_shopping_cart'}
                           </span>
                         </button>
