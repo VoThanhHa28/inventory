@@ -7,11 +7,13 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  previewAsUser: boolean;
 
   // Actions
   setAuth: (user: User, token: string) => void;
   logout: () => void;
   setLoading: (loading: boolean) => void;
+  togglePreviewMode: () => void;
   
   // Helpers
   isAdmin: () => boolean;
@@ -29,6 +31,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   token: null,
   isAuthenticated: false,
   isLoading: false,
+  previewAsUser: false,
 
   setAuth: (user, token) => {
     set({ user, token, isAuthenticated: true });
@@ -37,12 +40,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: () => {
-    set({ user: null, token: null, isAuthenticated: false });
+    set({ user: null, token: null, isAuthenticated: false, previewAsUser: false });
     // Clear from localStorage
     localStorage.removeItem('auth_token');
   },
 
   setLoading: (loading) => set({ isLoading: loading }),
+
+  togglePreviewMode: () => set((state) => ({ previewAsUser: !state.previewAsUser })),
 
   isAdmin: () => get().user?.role === Role.ADMIN,
   isUser: () => get().user?.role === Role.USER,

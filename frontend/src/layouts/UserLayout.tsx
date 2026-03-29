@@ -10,7 +10,7 @@ import { useCartStore } from '@stores/cartStore'
  */
 const UserLayout: React.FC = () => {
   const navigate = useNavigate()
-  const { user, logout, isAdmin } = useAuthStore()
+  const { user, logout, isAdmin, previewAsUser, togglePreviewMode } = useAuthStore()
   const { getItemCount } = useCartStore()
   const itemCount = getItemCount()
 
@@ -56,7 +56,7 @@ const UserLayout: React.FC = () => {
           </Link>
 
           {/* Admin Access */}
-          {isAdmin() && (
+          {isAdmin() && !previewAsUser && (
             <>
               <div className="my-4 border-t border-outline-variant/20"></div>
               <Link
@@ -66,6 +66,20 @@ const UserLayout: React.FC = () => {
                 <span className="material-symbols-outlined">security</span>
                 <span>Admin Panel</span>
               </Link>
+            </>
+          )}
+          
+          {/* Back to Admin Button (Preview Mode) */}
+          {previewAsUser && isAdmin() && (
+            <>
+              <div className="my-4 border-t border-outline-variant/20"></div>
+              <button
+                onClick={togglePreviewMode}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors font-inter font-medium tracking-wide uppercase text-[11px]"
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+                <span>Back to Admin</span>
+              </button>
             </>
           )}
         </nav>

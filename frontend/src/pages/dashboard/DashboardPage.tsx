@@ -9,7 +9,7 @@ import { useAuthStore } from '@stores/authStore'
  */
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const { user, logout, togglePreviewMode } = useAuthStore()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
 
   const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats()
@@ -152,7 +152,10 @@ const DashboardPage: React.FC = () => {
 
           {/* View Store */}
           <button
-            onClick={() => navigate('/shop/products')}
+            onClick={() => {
+              togglePreviewMode()
+              navigate('/shop/products')
+            }}
             className="w-full flex items-center space-x-3 px-6 py-4 text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 rounded-lg transition-colors"
           >
             <span className="text-xl">🛍️</span>
