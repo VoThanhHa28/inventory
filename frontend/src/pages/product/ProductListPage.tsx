@@ -21,17 +21,18 @@ const ProductListPage: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchInput)
-    }, 500)
+    }, 300) // Reduced from 500ms for faster responsiveness
     return () => clearTimeout(timer)
   }, [searchInput])
 
   // Fetch products with React Query
   const { data, isLoading } = useQuery({
     queryKey: ['products', currentPage, pageSize, selectedCategory, debouncedSearch],
-    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    staleTime: 1000 * 60 * 5, // Cache fresh for 5 minutes (reduced from 10 for fresher data)
     gcTime: 1000 * 60 * 30, // Keep in memory for 30 minutes
     retry: 2, // Retry failed requests 2 times
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    enabled: true, // Always fetch immediately
     queryFn: () =>
       productsApi.getProducts({
         page: currentPage,

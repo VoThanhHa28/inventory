@@ -276,7 +276,7 @@ const CartPage: React.FC = () => {
                   </div>
 
                   {/* Checkout Button */}
-                  <button className="w-full py-4 px-6 signature-gradient text-white font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/30 mb-3 flex items-center justify-center gap-2">
+                  <button className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 active:scale-95 transition-all shadow-lg shadow-blue-600/30 mb-3 flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined">shopping_bag</span>
                     Proceed to Checkout
                   </button>
