@@ -1,11 +1,13 @@
 package com.project.inventory.repository;
 
+import com.project.inventory.configuration.TestCacheConfig;
 import com.project.inventory.entity.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(TestCacheConfig.class)
 @DisplayName("ProductRepository Integration Tests")
 public class ProductRepositoryTest {
 
