@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { productsApi } from '@/api'
+import { Product } from '@types'
 
 /**
  * ProductListPage
@@ -267,7 +268,7 @@ const ProductListPage: React.FC = () => {
           {/* Product Grid */}
           {!isLoading && products.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10">
-              {products.map(product => {
+              {products.map((product: Product) => {
                 const stockStatus = getStockStatus(product.stockQuantity)
                 const sku = generateSKU(product.id, product.category)
 

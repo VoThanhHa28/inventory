@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { productsApi } from '@/api'
 import { useAuthStore } from '@stores/authStore'
+import { Product } from '@types'
 
 /**
  * AdminInventoryPage
@@ -39,9 +40,9 @@ const AdminInventoryPage: React.FC = () => {
   // Calculate stats
   const stats = {
     totalProducts: data?.totalElements || 0,
-    inStock: data?.content?.filter((p) => p.stockQuantity > 10).length || 0,
-    lowStock: data?.content?.filter((p) => p.stockQuantity > 0 && p.stockQuantity <= 10).length || 0,
-    outOfStock: data?.content?.filter((p) => p.stockQuantity === 0).length || 0,
+    inStock: data?.content?.filter((p: Product) => p.stockQuantity > 10).length || 0,
+    lowStock: data?.content?.filter((p: Product) => p.stockQuantity > 0 && p.stockQuantity <= 10).length || 0,
+    outOfStock: data?.content?.filter((p: Product) => p.stockQuantity === 0).length || 0,
   }
 
   // Get low stock threshold from config (default: 10)
@@ -243,7 +244,7 @@ const AdminInventoryPage: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-surface-container">
                     {data?.content && data.content.length > 0 ? (
-                      data.content.map((product) => {
+                      data.content.map((product: Product) => {
                         const status = getStockStatus(product.stockQuantity)
                         const sku = generateSKU(product.id, product.category)
 
