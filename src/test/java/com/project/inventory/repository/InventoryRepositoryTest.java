@@ -1,5 +1,6 @@
 package com.project.inventory.repository;
 
+import com.project.inventory.configuration.TestCacheConfig;
 import com.project.inventory.entity.Inventory;
 import com.project.inventory.entity.InventoryStatus;
 import com.project.inventory.entity.Product;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import jakarta.persistence.EntityManager;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(TestCacheConfig.class)
 @DisplayName("InventoryRepository Integration Tests")
 public class InventoryRepositoryTest {
 
