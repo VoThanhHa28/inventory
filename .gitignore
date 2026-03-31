@@ -38,3 +38,16 @@ build/
 .DS_Store
 
 uploads/
+
+# Personal notes & analysis (local reference only)
+STUDY_GUIDE_CHEAT_SHEET.md
+DATABASE_AUDIT_REPORT.md
+BACKEND_ARCHITECTURE_ANALYSIS.md
+docs/
+frontend/PRODUCT_PAGES_REVIEW.md
+
+# Temporary test files
+test_full.txt
+test_output.txt
+*.dump
+*.dumpstream

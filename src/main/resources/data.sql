@@ -1,6 +1,7 @@
 -- ============================================
 -- User seed data
 -- ============================================
+-- Password: 123456 (for all users)
 -- Password hash: $2a$12$kl4WRHAIAPdICEiOUER.MOYoM4tbQvwHRLQ2dhA87kUw4juaNyQ2W
 -- ============================================
 INSERT INTO users (id, username, password, full_name, role, created_at, updated_at) VALUES
