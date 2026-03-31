@@ -54,10 +54,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Allow CORS preflight requests (OPTIONS) without authentication
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Public endpoints
-                        .requestMatchers("/api/auth/**", "/api/uploads/**").permitAll()
+                        // Public auth endpoints - LOGIN
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        // Public auth endpoints - REGISTER
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                        // Public auth endpoints - GET PROFILE
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").permitAll()
+                        // Public file upload endpoints
+                        .requestMatchers("/api/uploads/**").permitAll()
                         // Public read-only product endpoints (users can browse before login)
-                        .requestMatchers("GET", "/api/products", "/api/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         // Swagger/API docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         // Everything else requires authentication
