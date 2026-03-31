@@ -15,11 +15,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ProductController - REST API for product management
@@ -97,7 +101,28 @@ public class ProductController {
                 .data(products)
                 .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
+                .body(response);
+    }
+
+    @GetMapping("/categories/list")
+    @Transactional(readOnly = true)
+    @Operation(summary = "Get all product categories", description = "Get distinct list of categories from active products")
+    public ResponseEntity<ApiResponse<List<String>>> getCategories() {
+        log.debug("Fetching product categories");
+        
+        List<String> categories = productService.getCategories();
+
+        ApiResponse<List<String>> response = ApiResponse.<List<String>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Categories retrieved successfully")
+                .data(categories)
+                .build();
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePublic())
+                .body(response);
     }
 
     @GetMapping("/{id}")

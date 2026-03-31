@@ -294,9 +294,8 @@ public class ProductServiceTest {
         // Given: Pageable query
         Pageable pageable = PageRequest.of(0, 10);
         List<Product> productList = List.of(mockProduct);
-        Page<Product> productPage = new PageImpl<>(productList, pageable, 1);
 
-        when(productRepository.findAllActive(pageable)).thenReturn(productPage);
+        when(productRepository.findAllActiveProducts()).thenReturn(productList);
 
         // When: Call getAllProducts
         Page<ProductResponseDTO> result = productService.getAllProducts(pageable);
@@ -308,7 +307,7 @@ public class ProductServiceTest {
         assertEquals("MacBook Pro", result.getContent().get(0).getName());
         assertEquals(false, result.getContent().get(0).getIsDeleted());
 
-        verify(productRepository, times(1)).findAllActive(pageable);
+        verify(productRepository, times(1)).findAllActiveProducts();
     }
 
     // ===================================================================
