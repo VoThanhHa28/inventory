@@ -53,9 +53,9 @@ public class CacheConfig {
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = 
                 new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 
-        // Configure Redis cache with 10-minute TTL (600 seconds) and JSON serialization
+        // Configure Redis cache with 5-minute TTL (300 seconds) and JSON serialization
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(600))  // 10 minutes
+                .entryTtl(Duration.ofSeconds(300))  // 5 minutes - synchronized with frontend cache
                 .disableCachingNullValues()         // Don't cache null results
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer));

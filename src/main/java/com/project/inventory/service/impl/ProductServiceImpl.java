@@ -14,10 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * ProductServiceImpl - Product business logic with soft delete and audit logging
@@ -64,26 +67,77 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "products", key = "'all-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
-        log.debug("Fetching all active products with pagination");
+        log.debug("Fetching all active products with pagination (from cache)");
         
-        // Query only non-deleted products
-        Page<Product> productPage = productRepository.findAllActive(pageable);
-
-        return productPage.map(this::mapToResponseDTO);
+        // Get cached full list
+        List<ProductResponseDTO> allProducts = getAllActiveProducts();
+        
+        // Apply pagination on cached list
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), allProducts.size());
+        List<ProductResponseDTO> pageContent = start > allProducts.size() ? List.of() : allProducts.subList(start, end);
+        
+        return new PageImpl<>(pageContent, pageable, allProducts.size());
     }
 
+    /**
+     * Get all active products for caching
+     * Results are cached for 5 minutes in Redis
+     */
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "products", key = "'filtered-' + (#category ?: 'all') + '-' + (#search ?: 'none') + '-' + #minPrice + '-' + #maxPrice + '-' + #pageable.pageNumber")
-    public Page<ProductResponseDTO> getProductsByFilters(String category, String search, Double minPrice, Double maxPrice, Pageable pageable) {
-        log.debug("Fetching products with filters - category: {}, search: {}, price: {}-{}", category, search, minPrice, maxPrice);
-        
-        // Query with filters
-        Page<Product> productPage = productRepository.findByFilters(category, search, minPrice, maxPrice, pageable);
+    @Cacheable(value = "products", key = "'all-products'")
+    public List<ProductResponseDTO> getAllActiveProducts() {
+        log.debug("Fetching all active products for caching");
+        return productRepository.findAllActiveProducts()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
 
-        return productPage.map(this::mapToResponseDTO);
+    /**
+     * Filter products in memory (no database hit)
+     * Uses cached product list for better performance
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> getProductsByFilters(String category, String search, Double minPrice, Double maxPrice, Pageable pageable) {
+        // Get cached full list
+        List<ProductResponseDTO> allProducts = getAllActiveProducts();
+        
+        // Filter in memory
+        List<ProductResponseDTO> filtered = allProducts.stream()
+                .filter(p -> category == null || category.equals("all") || p.getCategory().equalsIgnoreCase(category))
+                .filter(p -> search == null || 
+                        p.getName().toLowerCase().contains(search.toLowerCase()) ||
+                        p.getDescription().toLowerCase().contains(search.toLowerCase()))
+                .filter(p -> minPrice == null || p.getPrice() >= minPrice)
+                .filter(p -> maxPrice == null || p.getPrice() <= maxPrice)
+                .toList();
+        
+        // Apply pagination on filtered list
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+        List<ProductResponseDTO> pageContent = start > filtered.size() ? List.of() : filtered.subList(start, end);
+        
+        return new PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
+    /**
+     * Get distinct categories from all products
+     */
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "'categories'")
+    public List<String> getCategories() {
+        log.debug("Fetching distinct categories");
+        return getAllActiveProducts().stream()
+                .map(ProductResponseDTO::getCategory)
+                .filter(cat -> cat != null && !cat.isBlank())
+                .distinct()
+                .sorted()
+                .toList();
     }
 
     @Override

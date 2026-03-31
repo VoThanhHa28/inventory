@@ -26,6 +26,19 @@ const ProductListPage: React.FC = () => {
     return () => clearTimeout(timer)
   }, [searchInput])
 
+  // Fetch categories from API (dynamic, not hardcoded)
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 30,
+    queryFn: async () => {
+      const response = await fetch('/api/products/categories/list')
+      const json = await response.json()
+      return json.data || [] // Extract data from API response
+    },
+  })
+  const categories = categoriesData || []
+
   // Fetch products with React Query
   const { data, isLoading } = useQuery({
     queryKey: ['products', currentPage, pageSize, selectedCategory, debouncedSearch],
@@ -167,35 +180,28 @@ const ProductListPage: React.FC = () => {
               </h3>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => setSelectedCategory('Hardware')}
+                  onClick={() => setSelectedCategory('all')}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                    selectedCategory === 'Hardware'
+                    selectedCategory === 'all'
                       ? 'bg-primary text-white'
                       : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
                   }`}
                 >
-                  Hardware
+                  All
                 </button>
-                <button
-                  onClick={() => setSelectedCategory('Software')}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                    selectedCategory === 'Software'
-                      ? 'bg-primary text-white'
-                      : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
-                  }`}
-                >
-                  Software
-                </button>
-                <button
-                  onClick={() => setSelectedCategory('Logistics')}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                    selectedCategory === 'Logistics'
-                      ? 'bg-primary text-white'
-                      : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
-                  }`}
-                >
-                  Logistics
-                </button>
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                      selectedCategory === category
+                        ? 'bg-primary text-white'
+                        : 'bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-white'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
               </div>
             </div>
 

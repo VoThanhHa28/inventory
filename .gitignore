@@ -45,6 +45,7 @@ DATABASE_AUDIT_REPORT.md
 BACKEND_ARCHITECTURE_ANALYSIS.md
 docs/
 frontend/PRODUCT_PAGES_REVIEW.md
+fe_prompt/
 
 # Temporary test files
 test_full.txt

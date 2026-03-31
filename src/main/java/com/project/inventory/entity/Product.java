@@ -2,11 +2,18 @@ package com.project.inventory.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
+@Table(name = "product", indexes = {
+    @Index(name = "idx_is_deleted", columnList = "is_deleted"),
+    @Index(name = "idx_category", columnList = "category"),
+    @Index(name = "idx_name", columnList = "name")
+})
 @Getter
 @Setter
 @NoArgsConstructor
